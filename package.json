@@ -1,0 +1,15 @@
+{
+  "name": "battleship_tdd",
+  "version": "1.0.0",
+  "description": "battleship game build up using Test Driven Development approach, without DOM representation, only functional components of it, at least for now.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "watch": "jest --watch /src/*.js"
+  },
+  "author": "abappy",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^27.0.4"
+  }
+}
