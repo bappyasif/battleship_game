@@ -5,11 +5,24 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "watch": "jest --watch /src/*.js"
+    "watch": "jest --watch /src/*.js",
+    "build": "webpack",
+    "debugMode": "npx webpack --watch --mode 'development' --devtool source-map",
+    "watchMode": "webpack --watch",
+    "start": "webpack serve --open"
   },
   "author": "abappy",
   "license": "ISC",
   "devDependencies": {
-    "jest": "^27.0.4"
+    "css-loader": "^5.2.6",
+    "jest": "^27.0.4",
+    "style-loader": "^2.0.0",
+    "webpack": "^5.38.1",
+    "webpack-cli": "^4.7.2",
+    "webpack-dev-server": "^3.11.2"
+  },
+  "dependencies": {
+    "clean-webpack-plugin": "^4.0.0-alpha.0",
+    "html-webpack-plugin": "^5.3.1"
   }
 }

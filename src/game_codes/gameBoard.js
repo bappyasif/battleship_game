@@ -2,7 +2,7 @@
 
 const Ship = require("./ship");
 
-function GameBoard() {
+function GameBoard(player) {
     let dummyCoords = ["A","4"];
     // gameboard should be able to place ships at specific coordinates by calling ship factory function
     // Ship(dummyCoords);
@@ -20,7 +20,7 @@ function GameBoard() {
         // let attackStatus = Ship(coords);
         // let checkAttack = commenceAttack.checkHitOrMiss(coords);
         let checkAttack = currentShip.checkHitOrMiss(coords);
-        console.log("<?", checkAttack)
+        // console.log("<?", checkAttack)
         // let shipsHealth = {}
         if(checkAttack) {
             // commenceAttack.hit(coords);
@@ -31,7 +31,7 @@ function GameBoard() {
             currentShip.missFired(coords);
             // loggingMissFiredShots.push(currentShip.logShots);
             loggingMissFiredShots.push(coords);
-            console.log("<>", loggingMissFiredShots, coords)
+            // console.log("<>", loggingMissFiredShots, coords)
             return loggingMissFiredShots;
         }
     }
@@ -53,12 +53,20 @@ function GameBoard() {
     let createGrids = (num) => {
         populateBoardOnDOM(num);
         let gridContainer = document.createElement('div');
+        // let gridContainer = document.querySelector('.human-board');
+        gridContainer.className = 'board-container'
 
         for(let i=0; i<grids; i++) {
-            // create grids
+            for(let j=0; j<grids; j++) {
+                // create grids
             let div = document.createElement('div');
-            div.className = 'game-board';
+            div.textContent = String.fromCharCode(65+i)+" "+j;
+            div.value = [String.fromCharCode(65+i), `${j}`];
+            // console.log(div.value)
+            // div.textContent = i;
+            div.className = 'board-grids';
             gridContainer.append(div);
+            }
         }
         return gridContainer;
     }

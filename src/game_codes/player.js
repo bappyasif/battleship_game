@@ -1,4 +1,4 @@
-function Player(whichPlayer, enemyBoard) {
+function Player(whichPlayer) {
     let whosTurn;
     let shipsHealth = {};
     let flagFleet = false;
@@ -57,17 +57,17 @@ function Player(whichPlayer, enemyBoard) {
             let randomCoords = [alph, num];
             keepingComputerRandomCoords[Object.keys(keepingComputerRandomCoords).length + 1] = randomCoords;
             // coordsGenerator();
-            if(Object.keys(keepingComputerRandomCoords).length === 2) return false;
-            console.log("??", randomCoords, keepingComputerRandomCoords)
+            // if(Object.keys(keepingComputerRandomCoords).length === 2) return false;
+            // console.log("??", randomCoords, keepingComputerRandomCoords)
             return randomCoords
             // console.log(randomCoords);
             // enemyBoard(randomCoords);
             // enemyBoard.checkAllShipsSank()
             // enemyBoard.keepingTrackOfShips()
-        
     }
 
     let humanPlayer = () => {
+        console.log('human player taking turn');
         if(whosTurn === 'human') {
             console.log('human player taking turn');
             let selectCoords = ["B", "2"];
