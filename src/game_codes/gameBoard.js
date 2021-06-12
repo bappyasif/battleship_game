@@ -36,6 +36,25 @@ function GameBoard(player) {
         }
     }
 
+    let placeShips = (coords) => {
+        let board = document.querySelector('.board-container');
+        // console.log(coords, "here!!", coords[0][0]);
+        if(board) {
+            Array.from(board.children).forEach((grid) => {
+                // console.log(grid.value[1] == coords[0][1], grid.value[1], coords[0][1])
+                let idx = 0;
+                do {
+                    if(grid.value[0] === coords[idx][0] && grid.value[1] == coords[idx][1]) {
+                        // console.log("here!!", grid.value, coords[idx][0], coords[idx][1]);
+                        grid.className = 'ship-placed';
+                    }
+                    idx++;
+                    // console.log(idx);
+                } while(idx < coords.length);
+            })
+        }
+    }
+
     let keepingTrackOfShips = () => {
         // commenceAttack.fleetStatus();
     }
@@ -75,8 +94,37 @@ function GameBoard(player) {
         createGrids,
         recieveAttacks,
         populateBoardOnDOM,
-        loggingMissFiredShots
+        loggingMissFiredShots,
+        placeShips
     }
 }
 
 module.exports = GameBoard;
+
+/**
+ * 
+ * 
+ let placeShips = (coords) => {
+        let board = document.querySelector('.board-container');
+        // console.log(coords, "here!!", coords[0][0]);
+        if(board) {
+            Array.from(board.children).forEach((grid, idx) => {
+                // console.log(grid.value[0], coords[0][0], coords[idx] )
+                // console.log(coords[idx][0], "??", idx, grid.value[0]);
+                console.log(coords[0][0], coords[0][1])
+                if(coords[idx] && (grid.value[0] === coords[0][0])) {
+                    // console.log(grid.value, grid.value[0], idx, coords[idx], coords);
+                    console.log(grid.value[0] === coords[idx][0], grid.value[0],coords[idx][0], "here!!",coords[0][0]);
+                    grid.className = 'ship-placed';
+                }
+                // if(coords[idx]) {
+                //     console.log(grid.value, idx);
+                //     grid.className = 'ship-placed';
+                // }
+                // if(grid.value[0] == coords[0][0] && idx == coords[0][1] ) {
+                //     console.log(grid.value);
+                // }
+            })
+        }
+    }
+ */

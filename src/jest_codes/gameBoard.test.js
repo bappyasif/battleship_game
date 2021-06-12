@@ -43,5 +43,10 @@ test.only('should check recieve attacks', () => {
     // expect(GameBoard().recieveAttacks(["A", "4"])).toEqual([["A","4"]])
     expect(GameBoard().recieveAttacks(["A", "4"])).not.toEqual([["A","4"]])
     expect(GameBoard().loggingMissFiredShots).not.toBeNull()
+});
+
+test.only('should place ships on player board', () => {
+    // expect(GameBoard().placeShips([["A", 2],["A", 3],["A", 4],["A", 5]])).toBe(false);
+    expect(GameBoard().placeShips([["A", 2],["A", 3],["A", 4],["A", 5]])).not.toBeTruthy();
 })
 

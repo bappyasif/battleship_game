@@ -1,4 +1,4 @@
-function Ship(coords, length) {
+function Ship(coords, length, type) {
     // let shipLength = 0;
     // let [a, d] = coords;
     let didSink = false;
