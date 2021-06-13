@@ -1,3 +1,5 @@
+const Player = require("./player");
+
 function Ship(coords, length, type) {
     // let shipLength = 0;
     // let [a, d] = coords;
@@ -41,6 +43,8 @@ function Ship(coords, length, type) {
     // let fleetStatus = () => console.log('all ships health report');
     // let allShipsHasSunk = () => console.log('all ships has sunk');
 
+    
+
     return {
         hit,
         isSunk,
@@ -48,7 +52,9 @@ function Ship(coords, length, type) {
         missFired,
         logShots,
         shipCoords,
-        shipLength
+        shipLength,
+        // coordsGenerator,
+        // shipsRandomCoordsGenerator
         // fleetStatus,
         // allShipsHasSunk
     }

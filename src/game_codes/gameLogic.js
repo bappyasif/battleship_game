@@ -29,6 +29,91 @@ let game = () => {
     let humanFleets = () => {
         let i = 0;
         do{
+            buildingShips();
+            // if(i === 0) {
+            //     buildingShips('carrier');
+            // } else if(i === 1) {
+            //     buildingShips('battleship');
+            // } else if(i === 2) {
+            //     buildingShips('cruiser');
+            // } else if(i === 3) {
+            //     buildingShips('submarine');
+            // } else if(i === 4) {
+            //     buildingShips('destroyer');
+            // }
+            i++;
+        } while(i<5)
+    }
+
+    let buildingShips = (type) => {
+        let shipCoords = human.coordsGenerator();
+        GameBoard(human).placeShips(shipCoords)
+        // shipType = human.positionShips();
+        // shipType = human.positionShip(type);
+        // shipType = Ship().coordsGenerator();
+        // console.log(shipType);
+        // shipPosition = shipType[type].shipCoords;
+        // shipPosition = shipType[type];
+        // placingShip = GameBoard(human).placeShips(shipPosition);
+    }
+
+    return {
+        creatingComputerGameBoard,
+        creatingHumanGameBoard, 
+        humanFleets
+    }
+}
+
+module.exports = game;
+
+/**
+ * 
+ * 
+ let buildingShips = (type) => {
+        let shipType, shipPosition, placingShip;
+        shipType = human.coordsGenerator();
+        // shipType = human.positionShips();
+        // shipType = human.positionShip(type);
+        // shipType = Ship().coordsGenerator();
+        console.log(shipType);
+        shipPosition = shipType[type].shipCoords;
+        // shipPosition = shipType[type];
+        placingShip = GameBoard(human).placeShips(shipPosition);
+    }
+ * 
+ * 
+ let humanFleets = () => {
+        let i = 0;
+        do{
+            if(i === 0) {
+                buildingShips('carrier');
+            } else if(i === 1) {
+                buildingShips('battleship');
+            } else if(i === 2) {
+                buildingShips('cruiser');
+            } else if(i === 3) {
+                buildingShips('submarine');
+            } else if(i === 4) {
+                buildingShips('destroyer');
+            }
+            i++;
+        } while(i<5)
+    }
+
+    let buildingShips = (type) => {
+        let shipType, shipPosition, placingShip;
+        // shipType = human.coordsGenerator();
+        // shipType = human.positionShip(type);
+        shipType = Ship().coordsGenerator();
+        console.log(shipType);
+        shipPosition = shipType[type].shipCoords;
+        placingShip = GameBoard(human).placeShips(shipPosition);
+    }
+ * 
+ * 
+     let humanFleets = () => {
+        let i = 0;
+        do{
             if(i === 0) {
                 buildingShips('carrier');
             } else if(i === 1) {
@@ -51,25 +136,6 @@ let game = () => {
         // let placingShip = GameBoard(human).placeShips(shipPosition);
         // console.log(shipType, shipPosition, shipPosition[0], placingShip);
     }
-
-    let buildingShips = (type) => {
-        let shipType, shipPosition, placingShip;
-        shipType = human.coordsGenerator(type);
-        console.log(shipType);
-        shipPosition = shipType[type].shipCoords;
-        placingShip = GameBoard(human).placeShips(shipPosition);
-    }
-
-    return {
-        creatingComputerGameBoard,
-        creatingHumanGameBoard, 
-        humanFleets
-    }
-}
-
-module.exports = game;
-
-/**
  * 
  * 
      // let human = Player('human', Board(Ship(["A", "4"], 2)));
