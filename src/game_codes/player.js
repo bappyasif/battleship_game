@@ -25,44 +25,46 @@ function Player(whichPlayer, ships) {
     let shipsRandomCoordsGenerator = (alph, num) => {
         // let isEmpty = Object.keys(trackingShipsUniqueCoords).length;
         let isEmpty = trackingShipsUniqueCoords.length;
-        let isUnique = checkinUniques(alph, num);
+        let notUnique;
         let checkBoundary;
         if(isEmpty == 0) {
             checkBoundary = num + 5 > 9;
             while(!checkBoundary) {
-                console.log(creatingShip(alph, num, 5, 'carrier'));
+                // console.log(creatingShip(alph, num, 5, 'carrier'));
                 // trackingShipsUniqueCoords.push(creatingShip(alph, num, 5, 'carrier')['carrier'].shipCoords);
                 trackingShipsUniqueCoords.push(creatingShip(alph, num, 5, 'carrier'));
                 return creatingShip(alph, num, 5, 'carrier');
             }
             return coordsGenerator();
         } else {
-            // console.log(isUnique, alph, num);
-            // isUnique = checkinUniques(alph, num);
-            if(isEmpty === 1 && isUnique) {                
+            if(isEmpty === 1) {                
                 checkBoundary = num + 4 > 9;
-                while(!checkBoundary) {
+                notUnique = checkinUniques(creatingShip(alph, num, 4, 'battleship'));
+                while(!checkBoundary && !notUnique) {
                     // trackingShipsUniqueCoords.push(creatingShip(alph, num, 4, 'battleship')['battleship'].shipCoords);
                     trackingShipsUniqueCoords.push(creatingShip(alph, num, 4, 'battleship'));
                     return creatingShip(alph, num, 4, 'battleship');
                 }
-            } else if(isEmpty === 2 && isUnique) {
+            } else if(isEmpty === 2) {
                 checkBoundary = num + 3 > 9;
-                while(!checkBoundary) {
+                notUnique = checkinUniques(creatingShip(alph, num, 3, 'cruiser'));
+                while(!checkBoundary && !notUnique) {
                     // trackingShipsUniqueCoords.push(creatingShip(alph, num, 3, 'cruiser')['cruiser'].shipCoords);
                     trackingShipsUniqueCoords.push(creatingShip(alph, num, 3, 'cruiser'));
                     return creatingShip(alph, num, 3, 'cruiser');
                 }
-            } else if(isEmpty === 3 && isUnique) {
+            } else if(isEmpty === 3) {
                 checkBoundary = num + 3 > 9;
-                while(!checkBoundary) {
+                notUnique = checkinUniques(creatingShip(alph, num, 3, 'submarine'));
+                while(!checkBoundary && !notUnique) {
                     // trackingShipsUniqueCoords.push(creatingShip(alph, num, 3, 'submarine')['submarine'].shipCoords);
                     trackingShipsUniqueCoords.push(creatingShip(alph, num, 3, 'submarine'));
                     return creatingShip(alph, num, 3, 'submarine');
                 }
-            } else if(isEmpty === 4 && isUnique) {
+            } else if(isEmpty === 4) {
                 checkBoundary = num + 2 > 9;
-                while(!checkBoundary) {
+                notUnique = checkinUniques(creatingShip(alph, num, 2, 'destroyer'));
+                while(!checkBoundary && !notUnique) {
                     // trackingShipsUniqueCoords.push(creatingShip(alph, num, 2, 'destroyer')['destroyer'].shipCoords);
                     trackingShipsUniqueCoords.push(creatingShip(alph, num, 2, 'destroyer'));
                     return creatingShip(alph, num, 2, 'destroyer');
@@ -73,35 +75,22 @@ function Player(whichPlayer, ships) {
     }
 
     let creatingShip = (alph, num, length, type) => {
-        // let ship = Ship([alph, num], length, type);
-        // console.log("shipyard", alph, num, type, length)
         let consecutiveCoords = [];
         let i = 0;
         do {
             consecutiveCoords.push([alph, num+i]);
             i++;
         } while(i < length);
-        
-        // let ship = Ship(consecutiveCoords, length, type);
-        // let ship = Ship(consecutiveCoords, length, type);
-        // shipsCoords[type] = ship;
-        // return shipsCoords;
+
         return consecutiveCoords;
     }
 
-    let checkinUniques = (alph, num) => {
-        console.log(trackingShipsUniqueCoords, "coords");
-        // let isUnique = trackingShipsUniqueCoords.every(coords => coords.every(ar => ar[0] == alph && ar[1] == num))
-        // let isUnique = trackingShipsUniqueCoords.every(coords => coords.every(ar => console.log(ar[0] == alph && ar[1] == num, alph, num, ar)))
-        // let leveledCoords = trackingShipsUniqueCoords.reduce((c, a)=>a.concat(c), []);
-        let leveledCoords = [].concat(trackingShipsUniqueCoords);
-        // let isUnique = leveledCoords.some(coords => coords.indexOf(alph) == -1 && coords.indexOf(num) == -1);
-        // let isUnique = leveledCoords.every(coords => coords.includes(alph) == -1 && coords.includes(num) == -1);
-        // let isUnique = !leveledCoords.some(coords => coords[0] == alph && coords[1] == num);
-        let isUnique = !leveledCoords.some(coords => coords[0] == alph && coords[1] == num);
-        console.log(leveledCoords, isUnique);
-        // return isUnique ? isUnique : coordsGenerator();
-        return isUnique;
+    let checkinUniques = (coords) => {
+        let leveledCoords = trackingShipsUniqueCoords.flat(1);
+
+        let check = leveledCoords.some(ar => coords.some(cr => ar[0] == cr[0] && ar[1] == cr[1]));
+        
+        return check;
     }
     
     let alphabetsSet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
@@ -184,6 +173,46 @@ function Player(whichPlayer, ships) {
 module.exports = Player;
 
 /**
+ * 
+ * 
+ let creatingShip = (alph, num, length, type) => {
+        // let ship = Ship([alph, num], length, type);
+        // console.log("shipyard", alph, num, type, length)
+        let consecutiveCoords = [];
+        let i = 0;
+        do {
+            consecutiveCoords.push([alph, num+i]);
+            i++;
+        } while(i < length);
+        
+        // let ship = Ship(consecutiveCoords, length, type);
+        // let ship = Ship(consecutiveCoords, length, type);
+        // shipsCoords[type] = ship;
+        // return shipsCoords;
+        return consecutiveCoords;
+    }
+ * 
+ * 
+ let checkinUniques = (coords) => {
+        // console.log(trackingShipsUniqueCoords, "coords");
+        // let isUnique = trackingShipsUniqueCoords.every(coords => coords.every(ar => ar[0] == alph && ar[1] == num))
+        // let isUnique = trackingShipsUniqueCoords.every(coords => coords.every(ar => console.log(ar[0] == alph && ar[1] == num, alph, num, ar)))
+        // let leveledCoords = trackingShipsUniqueCoords.reduce((c, a)=>a.concat(c), []);
+        // let leveledCoords = [].concat(trackingShipsUniqueCoords);
+        // let isUnique = leveledCoords.some(coords => coords.indexOf(alph) == -1 && coords.indexOf(num) == -1);
+        // let isUnique = leveledCoords.every(coords => coords.includes(alph) == -1 && coords.includes(num) == -1);
+        // let isUnique = !leveledCoords.some(coords => coords[0] == alph && coords[1] == num);
+        // let isUnique = !leveledCoords.some(coords => coords[0] == alph && coords[1] == num);
+        // console.log(leveledCoords, isUnique);
+        // return isUnique ? isUnique : coordsGenerator();
+        let isUnique = false;
+        let leveledCoords = trackingShipsUniqueCoords.flat(1);
+
+        let check = leveledCoords.some(ar => coords.some(cr => ar[0] == cr[0] && ar[1] == cr[1]));
+        console.log(check, "wow!!");
+        // return isUnique;
+        return check;
+    }
  * 
  * 
      // generating ships and positioning them accordingly

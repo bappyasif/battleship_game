@@ -1,5 +1,6 @@
 // let Ship = require('./battleShip');
 
+const Game = require("./gameLogic");
 const Ship = require("./ship");
 
 function GameBoard(player) {
@@ -10,7 +11,9 @@ function GameBoard(player) {
     let currentShip = Ship(["A", "4"], 2);
     let loggingMissFiredShots = [];
     let grids;
-    let loggingHits = []
+    let loggingHits = [];
+    let computerCoords = [];
+    let humanCoords = [];
 
     // let commenceAttack = ship(coords);
     let shipsHealth = {}
@@ -36,10 +39,14 @@ function GameBoard(player) {
         }
     }
 
-    let placeShips = (coords) => {
-        let board = document.querySelector('.board-container');
-        // console.log(coords, "here!!", coords[0][0]);
+    let placeShips = (coords, board) => {
+        // let board = document.querySelector('.board-container');
+        // console.log(coords, "here!!", coords[0][0], board);
         if(board) {
+            // if(board.classList.contains('board-container-for-computer')) {
+            //     computerCoords.push(coords);
+            //     console.log(computerCoords,"!!")
+            // }
             Array.from(board.children).forEach((grid) => {
                 // console.log(grid.value[1] == coords[0][1], grid.value[1], coords[0][1])
                 let idx = 0;
@@ -53,6 +60,40 @@ function GameBoard(player) {
                 } while(idx < coords.length);
             })
         }
+    }
+
+    let getCoordsFromClick = () => {
+        let computerBoard = document.querySelector('.board-container-for-computer');
+        // console.log(computerBoard)
+        if(computerBoard) {
+            computerBoard.addEventListener('click', gridClicked);
+        }
+    }
+
+    let gridClicked = (evt) => {
+        // Game()
+        let checkCoords = evt.target.value;
+        let found = checkIfCoordsMatched(checkCoords);
+        if(found) {
+            whichShip(checkCoords);
+        }
+        // console.log(checkCoords, Game, computerCoords, " ", humanCoords);
+    }
+
+    let whichShip = coords => {
+        let check = false;
+        let test = computerCoords.map((arr, idx) => {
+            console.log(arr, idx, arr[0], arr.indexOf(coords[0]));
+            // return arr.every(cr => cr[0] == coords [0] && cr[1] == coords[1]);
+            return arr.some(cr => cr[0] == coords[0] && cr[1] == coords[1] ? idx : false);
+        })
+        // console.log(check, test, coords, computerCoords[0]);
+    }
+
+    let checkIfCoordsMatched = coords => {
+        let found = computerCoords.flat(1).some(ar => ar[0] == coords[0] && ar[1] == coords[1]);
+        // console.log(found, coords, computerCoords.flat(1));
+        return found;
     }
 
     let keepingTrackOfShips = () => {
@@ -69,12 +110,17 @@ function GameBoard(player) {
         return grids;
     }
 
-    let createGrids = (num) => {
+    let creatingGridsForHuman = (num) => {
         populateBoardOnDOM(num);
         let gridContainer = document.createElement('div');
         // let gridContainer = document.querySelector('.human-board');
-        gridContainer.className = 'board-container'
+        gridContainer.className = 'board-container';
+        gridContainer = creatingGrids(gridContainer);
+        // console.log(gridContainer)
+        return gridContainer;
+    }
 
+    let creatingGrids = (gridContainer) => {
         for(let i=0; i<grids; i++) {
             for(let j=0; j<grids; j++) {
                 // create grids
@@ -90,12 +136,27 @@ function GameBoard(player) {
         return gridContainer;
     }
 
+    let creatingGridsForComputer = (num) => {
+        populateBoardOnDOM(num);
+        let gridContainer = document.createElement('div');
+        // let gridContainer = document.querySelector('.human-board');
+        gridContainer.className = 'board-container-for-computer';
+        gridContainer = creatingGrids(gridContainer);
+        return gridContainer;
+    }
+
     return {
-        createGrids,
+        creatingGrids,
         recieveAttacks,
         populateBoardOnDOM,
         loggingMissFiredShots,
-        placeShips
+        placeShips,
+        creatingGridsForComputer,
+        creatingGridsForHuman,
+        getCoordsFromClick,
+        gridClicked,
+        computerCoords,
+        humanCoords
     }
 }
 
