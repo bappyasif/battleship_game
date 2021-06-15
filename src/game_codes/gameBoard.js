@@ -81,23 +81,90 @@ function GameBoard(player) {
     }
 
     let whichShip = coords => {
-        let check = false;
-        let test = computerCoords.map((arr, idx) => {
-            console.log(arr, idx, arr[0], arr.indexOf(coords[0]));
+        // let check = false;
+        console.log(computerCoords,"!!")
+        let check = computerCoords.map((arr, idx) => {
+            // console.log(arr, idx, arr[0], coords[0], coords[0] === arr[0][0], arr.indexOf(coords[0]));
             // return arr.every(cr => cr[0] == coords [0] && cr[1] == coords[1]);
-            return arr.some(cr => cr[0] == coords[0] && cr[1] == coords[1] ? idx : false);
-        })
+            if(coords != undefined) {
+                return arr.some(cr => cr[0] == coords[0] && cr[1] == coords[1] ? true : false);
+            }
+        }).indexOf(true);
+        if(check !== -1) {
+            keepingTrackOfComputerShips(check);
+        }
+        // console.log(check, "which");
         // console.log(check, test, coords, computerCoords[0]);
     }
 
     let checkIfCoordsMatched = coords => {
-        let found = computerCoords.flat(1).some(ar => ar[0] == coords[0] && ar[1] == coords[1]);
+        let found
+        if(coords != undefined) {
+            found = computerCoords.flat(1).some(ar => ar[0] == coords[0] && ar[1] == coords[1]);
+        }
+        // let found = computerCoords.flat(1).some(ar => ar[0] == coords[0] && ar[1] == coords[1]);
         // console.log(found, coords, computerCoords.flat(1));
         return found;
     }
 
-    let keepingTrackOfShips = () => {
-        // commenceAttack.fleetStatus();
+    let keepingTrackOfComputerShips = (idx) => {
+        // console.log(shipsHealth, 'ships', idx);
+        findingShipForAdjustingItsHealth(idx, 'computer');
+    }
+
+    let findingShipForAdjustingItsHealth = (idx, whichPlayer) => {
+        let test;
+        for(let key in shipsHealth) {
+            if(key === whichPlayer+idx) {
+                shipsHealth[key].length--;
+                if(shipsHealth[key].length == 0) {
+                    shipSanked(shipsHealth[key], idx);
+                    delete shipsHealth[key];
+                }
+            }
+        }
+        // console.log(shipsHealth);
+    }
+
+    let shipSanked = (whichShip, idx) => {
+        // console.log('ship sank', whichShip, shipsHealth[whichShip]);
+        removeShipFromBoard(whichShip, idx);
+    }
+
+    let removeShipFromBoard = (ship, idx) => {
+        let board = document.querySelector('.board-container-for-computer');
+        // console.log(ship, "here!!", board, ship.coords.length)
+        if(board) {
+            Array.from(board.children).forEach(grid => {
+                // console.log(ship.coords[0][0], "here!!", grid.value[0])
+               ship.coords.forEach(coords => {
+                   if(grid.value[0] == coords[0] && grid.value[1] == coords[1]) {
+                    grid.className = 'board-grids';
+                    grid.classList.add('unclickable');
+                    grid.removeEventListener('click', ()=>console.log('??'))
+                    // updateComputerShipCoords(idx)
+                    // console.log(computerCoords);
+                    // grid.removeEventListener('click', gridClicked);
+                    // grid.removeEventListener('click', getCoordsFromClick);
+                   }
+                //    updateComputerShipCoords(idx)
+               })
+               return;
+            //    updateComputerShipCoords(idx); 
+            })
+            updateComputerShipCoords(idx)
+        }
+    }
+
+    let updateComputerShipCoords = (idx) => {
+        let filtered = [];
+        for(let i=0; i<computerCoords.length; i++) {
+            if(i!=idx) {
+                filtered.push(computerCoords[i]);
+            } 
+        }
+        // console.log(filtered);
+        computerCoords = filtered;
     }
 
     let checkAllShipsSank = () => {
@@ -156,13 +223,71 @@ function GameBoard(player) {
         getCoordsFromClick,
         gridClicked,
         computerCoords,
-        humanCoords
+        humanCoords,
+        shipsHealth
     }
 }
 
 module.exports = GameBoard;
 
 /**
+ * 
+ * 
+     let updateComputerShipCoords = (idx) => {
+        // console.log(idx,"??")
+        // computerCoords = computerCoords.slice(0,idx) + computerCoords.slice(idx);
+        let filtered = [];
+        for(let i=0; i<computerCoords.length; i++) {
+            if(i!=idx) {
+                // break;
+                // continue;
+                filtered.push(computerCoords[i]);
+            } 
+            // else {
+            //     filtered.push(computerCoords[i]);
+            // }
+        }
+        // console.log(filtered);
+        computerCoords = filtered;
+        // console.log(computerCoords,"<>");
+
+        // computerCoords.splice(idx, 1);
+        // whichShip();
+        // computerCoords = computerCoords.filter((v,i) => i!= idx ? v : -1);
+        // let test = computerCoords.map((v,i) => i == idx ? false : v)
+        // console.log(computerCoords, "??", test);
+    }
+ * 
+ * 
+     let removeShipFromBoard = ship => {
+        let board = document.querySelector('.board-container-for-computer');
+        console.log(ship, "here!!", board, ship.coords.length)
+        if(board) {
+            Array.from(board.children).forEach(grid => {
+                // console.log(ship.coords[0][0], "here!!", grid.value[0])
+               ship.coords.forEach(coords => {
+                   if(grid.value[0] == coords[0] && grid.value[1] == coords[1]) {
+                    grid.className = 'board-grids';
+                    // grid.removeEventListener('click', gridClicked);
+                    // grid.removeEventListener('click', getCoordsFromClick);
+                   }
+               }) 
+            })
+
+            // if((grid.value[0] == ship.coords[0][0] && grid.value[1] == ship.coords[0][1])) {
+            //     grid.className = 'board-grids';
+            //     ship.coords.unshift();
+            //     console.log(ship)
+            //     grid.removeEventListener('click', gridClicked);
+            // }
+            
+            // if((grid.value[0] == ship.coords[0][0] && grid.value[1] == ship.coords[0][1]) || grid.value[0] == ship.coords[1][0] && grid.value[1] == ship.coords[1][1]) {
+                //     console.log("here!!")
+                //     grid.className = 'board-grids';
+                //     // grid.removeEventListener()
+                // }
+        }
+    }
  * 
  * 
  let placeShips = (coords) => {

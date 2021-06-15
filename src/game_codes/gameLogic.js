@@ -62,13 +62,13 @@ let game = () => {
     let computerFleet = () => {
         let i = 0;
         while(i < 5) {
-            computerShips();
+            computerShips(i);
             i++;
         }
         gameBoard.getCoordsFromClick();
     }
 
-    let computerShips = () => {
+    let computerShips = (idx) => {
         let shipCoords = ship.coordsGenerator();
 
         let board = document.querySelector('.board-container-for-computer');
@@ -76,6 +76,8 @@ let game = () => {
         gameBoard.computerCoords.push(shipCoords);
 
         GameBoard().placeShips(shipCoords, board);
+
+        gameBoard.shipsHealth['computer'+idx] = {coords: shipCoords, length: shipCoords.length};
     }
 
     return {
