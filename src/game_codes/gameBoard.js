@@ -6,8 +6,6 @@ const Ship = require("./ship");
 function GameBoard(player) {
     let dummyCoords = ["A","4"];
     // gameboard should be able to place ships at specific coordinates by calling ship factory function
-    // Ship(dummyCoords);
-    // let currentShip = Ship(["A", "4"], 2, ["A", "4"]);
     let currentShip = Ship(["A", "4"], 2);
     let loggingMissFiredShots = [];
     let grids;
@@ -40,76 +38,72 @@ function GameBoard(player) {
     }
 
     let placeShips = (coords, board) => {
-        // let board = document.querySelector('.board-container');
-        // console.log(coords, "here!!", coords[0][0], board);
         if(board) {
-            // if(board.classList.contains('board-container-for-computer')) {
-            //     computerCoords.push(coords);
-            //     console.log(computerCoords,"!!")
-            // }
             Array.from(board.children).forEach((grid) => {
-                // console.log(grid.value[1] == coords[0][1], grid.value[1], coords[0][1])
                 let idx = 0;
                 do {
                     if(grid.value[0] === coords[idx][0] && grid.value[1] == coords[idx][1]) {
-                        // console.log("here!!", grid.value, coords[idx][0], coords[idx][1]);
                         grid.className = 'ship-placed';
                     }
                     idx++;
-                    // console.log(idx);
                 } while(idx < coords.length);
             })
         }
     }
 
-    let getCoordsFromClick = () => {
-        let computerBoard = document.querySelector('.board-container-for-computer');
-        // console.log(computerBoard)
-        if(computerBoard) {
-            computerBoard.addEventListener('click', gridClicked);
+    let getCoordsFromClick = (board) => {
+        if(board) {
+            board.addEventListener('click', gridClicked);
         }
     }
 
     let gridClicked = (evt) => {
-        // Game()
         let checkCoords = evt.target.value;
-        let found = checkIfCoordsMatched(checkCoords);
-        if(found) {
-            whichShip(checkCoords);
+        let checkSide = evt.target.parentNode.parentNode.className;
+        let found;
+        if(checkSide == 'human-board') {
+            found = checkHumanCoordsMatched(checkCoords, checkSide);
+            whichShipMods(checkCoords, humanCoords, checkSide);
+        } else {
+            found = checkComputerCoordsMatched(checkCoords, checkSide);
+            whichShipMods(checkCoords, computerCoords, checkSide);
         }
-        // console.log(checkCoords, Game, computerCoords, " ", humanCoords);
+        if(found) markShipBeingHit(checkCoords, checkSide);
     }
 
-    let whichShip = coords => {
-        // let check = false;
-        console.log(computerCoords,"!!")
-        let check = computerCoords.map((arr, idx) => {
-            // console.log(arr, idx, arr[0], coords[0], coords[0] === arr[0][0], arr.indexOf(coords[0]));
-            // return arr.every(cr => cr[0] == coords [0] && cr[1] == coords[1]);
+    let whichShipMods = (coords, coordsArr, checkSide) => {
+        let check = coordsArr.map(arr => {
             if(coords != undefined) {
                 return arr.some(cr => cr[0] == coords[0] && cr[1] == coords[1] ? true : false);
             }
         }).indexOf(true);
         if(check !== -1) {
-            keepingTrackOfComputerShips(check);
+            keepingTrackOfShips(check, checkSide);
         }
-        // console.log(check, "which");
-        // console.log(check, test, coords, computerCoords[0]);
     }
 
-    let checkIfCoordsMatched = coords => {
+    let checkHumanCoordsMatched = coords => {
+        let found;
+        if(coords != undefined) {
+            found = humanCoords.flat(1).some(ar => ar[0] == coords[0] && ar[1] == coords[1]);
+        }
+        return found;
+    }
+
+    let checkComputerCoordsMatched = (coords, checkSide) => {
         let found
         if(coords != undefined) {
             found = computerCoords.flat(1).some(ar => ar[0] == coords[0] && ar[1] == coords[1]);
         }
-        // let found = computerCoords.flat(1).some(ar => ar[0] == coords[0] && ar[1] == coords[1]);
-        // console.log(found, coords, computerCoords.flat(1));
         return found;
     }
 
-    let keepingTrackOfComputerShips = (idx) => {
-        // console.log(shipsHealth, 'ships', idx);
-        findingShipForAdjustingItsHealth(idx, 'computer');
+    let keepingTrackOfShips = (idx, side) => {
+        if(side == 'human-board') {
+            findingShipForAdjustingItsHealth(idx, 'human');
+        } else {
+            findingShipForAdjustingItsHealth(idx, 'computer');
+        }
     }
 
     let findingShipForAdjustingItsHealth = (idx, whichPlayer) => {
@@ -118,53 +112,74 @@ function GameBoard(player) {
             if(key === whichPlayer+idx) {
                 shipsHealth[key].length--;
                 if(shipsHealth[key].length == 0) {
-                    shipSanked(shipsHealth[key], idx);
+                    shipSankedMods(whichPlayer, shipsHealth[key], idx)
                     delete shipsHealth[key];
                 }
             }
         }
-        // console.log(shipsHealth);
     }
 
-    let shipSanked = (whichShip, idx) => {
-        // console.log('ship sank', whichShip, shipsHealth[whichShip]);
-        removeShipFromBoard(whichShip, idx);
+    let markShipBeingHit = (coords, whichSide) => {
+        let board;
+        if(whichSide.split("-")[0] == 'human') {
+            board = document.querySelector('.board-container');
+        } else {
+            board = document.querySelector('.board-container-for-computer');
+        }
+        if(board) { 
+            Array.from(board.children).forEach((grid, idx) => {
+                if(grid.value[0] == coords[0] && grid.value[1] == coords[1]) {
+                    grid.textContent = "X";
+                    grid.classList.add("unclickable", "ship-hitted");
+                }
+            });
+        }
     }
 
-    let removeShipFromBoard = (ship, idx) => {
-        let board = document.querySelector('.board-container-for-computer');
-        // console.log(ship, "here!!", board, ship.coords.length)
+    let shipSankedMods = (whichPlayer, whichShip, idx) => {
+        let board;
+        if(whichPlayer == 'human') {
+            board = document.querySelector('.board-container');
+        } else {
+            board = document.querySelector('.board-container-for-computer');
+        }
+        disablingShipOnBoard(whichShip, idx, board);
+    }
+
+    let disablingShipOnBoard = (ship, idx, board) => {
+        console.log("ship sanked mods", ship, idx, board)
         if(board) {
             Array.from(board.children).forEach(grid => {
-                // console.log(ship.coords[0][0], "here!!", grid.value[0])
                ship.coords.forEach(coords => {
                    if(grid.value[0] == coords[0] && grid.value[1] == coords[1]) {
-                    grid.className = 'board-grids';
+                    // grid.className = 'board-grids';
                     grid.classList.add('unclickable');
-                    grid.removeEventListener('click', ()=>console.log('??'))
-                    // updateComputerShipCoords(idx)
-                    // console.log(computerCoords);
-                    // grid.removeEventListener('click', gridClicked);
-                    // grid.removeEventListener('click', getCoordsFromClick);
                    }
-                //    updateComputerShipCoords(idx)
                })
                return;
-            //    updateComputerShipCoords(idx); 
             })
-            updateComputerShipCoords(idx)
+            updateExistingShipCoords(idx, board.parentNode.className);
         }
     }
 
-    let updateComputerShipCoords = (idx) => {
-        let filtered = [];
-        for(let i=0; i<computerCoords.length; i++) {
-            if(i!=idx) {
-                filtered.push(computerCoords[i]);
-            } 
+    let updateExistingShipCoords = (idx, whichSideShipCoords) => {
+        let filteredHumanShips = [];
+        let filteredComputerShips = [];
+        if(whichSideShipCoords.split("-")[0] == 'human') {
+            for(let i=0; i<humanCoords.length; i++) {
+                if(i!=idx) {
+                    filteredHumanShips.push(humanCoords[i]);
+                } 
+            }
+            humanCoords = filteredHumanShips;
+        } else {
+            for(let i=0; i<computerCoords.length; i++) {
+                if(i!=idx) {
+                    filteredComputerShips.push(computerCoords[i]);
+                } 
+            }
+            computerCoords = filteredComputerShips;       
         }
-        // console.log(filtered);
-        computerCoords = filtered;
     }
 
     let checkAllShipsSank = () => {
@@ -229,88 +244,3 @@ function GameBoard(player) {
 }
 
 module.exports = GameBoard;
-
-/**
- * 
- * 
-     let updateComputerShipCoords = (idx) => {
-        // console.log(idx,"??")
-        // computerCoords = computerCoords.slice(0,idx) + computerCoords.slice(idx);
-        let filtered = [];
-        for(let i=0; i<computerCoords.length; i++) {
-            if(i!=idx) {
-                // break;
-                // continue;
-                filtered.push(computerCoords[i]);
-            } 
-            // else {
-            //     filtered.push(computerCoords[i]);
-            // }
-        }
-        // console.log(filtered);
-        computerCoords = filtered;
-        // console.log(computerCoords,"<>");
-
-        // computerCoords.splice(idx, 1);
-        // whichShip();
-        // computerCoords = computerCoords.filter((v,i) => i!= idx ? v : -1);
-        // let test = computerCoords.map((v,i) => i == idx ? false : v)
-        // console.log(computerCoords, "??", test);
-    }
- * 
- * 
-     let removeShipFromBoard = ship => {
-        let board = document.querySelector('.board-container-for-computer');
-        console.log(ship, "here!!", board, ship.coords.length)
-        if(board) {
-            Array.from(board.children).forEach(grid => {
-                // console.log(ship.coords[0][0], "here!!", grid.value[0])
-               ship.coords.forEach(coords => {
-                   if(grid.value[0] == coords[0] && grid.value[1] == coords[1]) {
-                    grid.className = 'board-grids';
-                    // grid.removeEventListener('click', gridClicked);
-                    // grid.removeEventListener('click', getCoordsFromClick);
-                   }
-               }) 
-            })
-
-            // if((grid.value[0] == ship.coords[0][0] && grid.value[1] == ship.coords[0][1])) {
-            //     grid.className = 'board-grids';
-            //     ship.coords.unshift();
-            //     console.log(ship)
-            //     grid.removeEventListener('click', gridClicked);
-            // }
-            
-            // if((grid.value[0] == ship.coords[0][0] && grid.value[1] == ship.coords[0][1]) || grid.value[0] == ship.coords[1][0] && grid.value[1] == ship.coords[1][1]) {
-                //     console.log("here!!")
-                //     grid.className = 'board-grids';
-                //     // grid.removeEventListener()
-                // }
-        }
-    }
- * 
- * 
- let placeShips = (coords) => {
-        let board = document.querySelector('.board-container');
-        // console.log(coords, "here!!", coords[0][0]);
-        if(board) {
-            Array.from(board.children).forEach((grid, idx) => {
-                // console.log(grid.value[0], coords[0][0], coords[idx] )
-                // console.log(coords[idx][0], "??", idx, grid.value[0]);
-                console.log(coords[0][0], coords[0][1])
-                if(coords[idx] && (grid.value[0] === coords[0][0])) {
-                    // console.log(grid.value, grid.value[0], idx, coords[idx], coords);
-                    console.log(grid.value[0] === coords[idx][0], grid.value[0],coords[idx][0], "here!!",coords[0][0]);
-                    grid.className = 'ship-placed';
-                }
-                // if(coords[idx]) {
-                //     console.log(grid.value, idx);
-                //     grid.className = 'ship-placed';
-                // }
-                // if(grid.value[0] == coords[0][0] && idx == coords[0][1] ) {
-                //     console.log(grid.value);
-                // }
-            })
-        }
-    }
- */
