@@ -12,6 +12,8 @@ function GameBoard(player) {
     let loggingHits = [];
     let computerCoords = [];
     let humanCoords = [];
+    let playerTurnFlag = false;
+    let filtered;
 
     // let commenceAttack = ship(coords);
     let shipsHealth = {}
@@ -57,18 +59,70 @@ function GameBoard(player) {
         }
     }
 
-    let gridClicked = (evt) => {
-        let checkCoords = evt.target.value;
-        let checkSide = evt.target.parentNode.parentNode.className;
+    let getCoordsForComputer = (board) => {
+        let [alph, num] = Ship().randomCoords();
+        let checkCoords = [alph, num];
+        let checkSide = board.parentNode.className
         let found;
         if(checkSide == 'human-board') {
             found = checkHumanCoordsMatched(checkCoords, checkSide);
             whichShipMods(checkCoords, humanCoords, checkSide);
+
+            // found = checkComputerCoordsMatched(checkCoords, checkSide);
+            // whichShipMods(checkCoords, computerCoords, checkSide);
+        }
+        if(found) {
+            markShipBeingHit(checkCoords, checkSide);
         } else {
+            loggingMissFiredShots.push({computer: checkCoords});
+            missHits(checkCoords, checkSide)
+        }
+        // console.log(found, checkCoords, checkSide)
+    }
+
+    let playersTurn = () => {
+        let test = document.querySelector('.board-container-for-computer');
+        let flag = true;
+        test.addEventListener('click', (evt) => {
+            if(flag) {
+                // alert('player 2');
+                let board = document.querySelector('.board-container-for-computer');
+                // getCoordsFromClick(board);
+                gridClicked(evt);
+                flag = false;
+            }
+            // alert('player 1');
+            let board = document.querySelector('.board-container');
+            getCoordsForComputer(board);
+            flag = true;
+        })
+    }
+
+    let gridClicked = (evt) => {
+        let checkCoords = evt.target.value;
+        let checkSide = evt.target.parentNode.parentNode.className;
+        let found;
+        if(checkSide == 'computer-board') {
+            // found = checkHumanCoordsMatched(checkCoords, checkSide);
+            // whichShipMods(checkCoords, humanCoords, checkSide);
+
             found = checkComputerCoordsMatched(checkCoords, checkSide);
             whichShipMods(checkCoords, computerCoords, checkSide);
+            playerTurnFlag = true;
+            // console.log("here!!")
+        } 
+        // else {
+        //     found = checkComputerCoordsMatched(checkCoords, checkSide);
+        //     whichShipMods(checkCoords, computerCoords, checkSide);
+        // }
+        if(found) {
+            markShipBeingHit(checkCoords, checkSide);
+        } else {
+            loggingMissFiredShots.push({human: checkCoords});
+            missHits(checkCoords, checkSide)
         }
-        if(found) markShipBeingHit(checkCoords, checkSide);
+        // playerTurnFlag = true;
+        // console.log("here!!", playerTurnFlag)
     }
 
     let whichShipMods = (coords, coordsArr, checkSide) => {
@@ -119,13 +173,68 @@ function GameBoard(player) {
         }
     }
 
-    let markShipBeingHit = (coords, whichSide) => {
+    let missHits = (coords, whichSide) => {
+        // console.log(coords, whichSide, "misshits!!")
+        let board = returnAnyGameBoard(whichSide);
+        // console.log('misshits', loggingMissFiredShots);
+        checkMissedCoordsAlreadyBeenVisited(coords, whichSide);
+        markingMissesOnBoard(board, coords)
+    }
+
+    let checkMissedCoordsAlreadyBeenVisited = (coords, whichSide) => {
+        // console.log('misshits', loggingMissFiredShots, coords, whichSide);
+        
+        if(whichSide.includes('computer-')) {
+            // console.log('misshitsOnHumanSide', coords, whichSide);
+            filtered = returnFilteredMissedCoords('human');
+        } else {
+            console.log('misshitsOnComputerSide', coords, whichSide, loggingMissFiredShots);
+            filtered = returnFilteredMissedCoords('computer');
+        }
+        console.log(filtered, "filtered")
+    }
+
+    let returnFilteredMissedCoords = (whichSide) => {
+        let filtered = [];
+        loggingMissFiredShots.forEach(logs => {
+            let keys = Object.keys(logs);
+            console.log(keys);
+            if(keys.includes(whichSide)) {
+                filtered.push(logs[keys]);
+            }
+        })
+        return filtered;
+    }
+
+    let returnAnyGameBoard = (whichSide) => {
         let board;
         if(whichSide.split("-")[0] == 'human') {
             board = document.querySelector('.board-container');
         } else {
             board = document.querySelector('.board-container-for-computer');
         }
+        return board;
+    }
+
+    let markingMissesOnBoard = (board, coords) => {
+        if(board) { 
+            Array.from(board.children).forEach(grid => {
+                if(grid.value[0] == coords[0] && grid.value[1] == coords[1]) {
+                    grid.textContent = "O";
+                    grid.classList.add("unclickable", "ship-hitted");
+                }
+            });
+        }
+    }
+
+    let markShipBeingHit = (coords, whichSide) => {
+        let board = returnAnyGameBoard(whichSide);
+        // if(whichSide.split("-")[0] == 'human') {
+        //     board = document.querySelector('.board-container');
+        // } else {
+        //     board = document.querySelector('.board-container-for-computer');
+        // }
+        
         if(board) { 
             Array.from(board.children).forEach((grid, idx) => {
                 if(grid.value[0] == coords[0] && grid.value[1] == coords[1]) {
@@ -180,6 +289,13 @@ function GameBoard(player) {
             }
             computerCoords = filteredComputerShips;       
         }
+    }
+
+    let removingShipsFromBoard = (board) => {
+        // console.log(board);
+        Array.from(board.children).forEach(grid => {
+            grid.className = 'board-grids';
+        });
     }
 
     let checkAllShipsSank = () => {
@@ -239,8 +355,34 @@ function GameBoard(player) {
         gridClicked,
         computerCoords,
         humanCoords,
-        shipsHealth
+        shipsHealth,
+        removingShipsFromBoard,
+        getCoordsForComputer,
+        playerTurnFlag,
+        playersTurn
     }
 }
 
 module.exports = GameBoard;
+
+/**
+ * 
+ * 
+ let playersTurn = () => {
+        let test = document.querySelector('.game-container');
+        let flag = false;
+        test.addEventListener('click', () => {
+            if(flag) {
+                alert('player 1');
+                let board = document.querySelector('.board-container');
+                getCoordsForComputer(board);
+                flag = false;
+            } else {
+                alert('player 2');
+                let board = document.querySelector('.board-container-for-computer');
+                getCoordsFromClick(board);
+                flag = true;
+            }
+        })
+    }
+ */

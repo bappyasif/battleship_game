@@ -45,12 +45,24 @@ function Ship(coords, length, type) {
     let alphabetsSet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
     let numeralsSet = ['0','1','2','3','4','5','6','7','8','9'];
     let trackingShipsUniqueCoords = [];
-    let coordsGenerator = () => {
+    
+    let randomCoords = () => {
         let randomNumber = Math.floor(Math.random()*alphabetsSet.length);
         let randomAlphabet = alphabetsSet[randomNumber];
         
         let randomNN = Math.floor(Math.random()*numeralsSet.length);
         let randomNumeral = numeralsSet[randomNN];
+
+        return [randomAlphabet, randomNumeral];
+    }
+    
+    let coordsGenerator = () => {
+        // let randomNumber = Math.floor(Math.random()*alphabetsSet.length);
+        // let randomAlphabet = alphabetsSet[randomNumber];
+        
+        // let randomNN = Math.floor(Math.random()*numeralsSet.length);
+        // let randomNumeral = numeralsSet[randomNN];
+        let [randomAlphabet, randomNumeral] = randomCoords();
         // console.log(randomAlphabet, randomNumeral, randomNN);
         return shipsRandomCoordsGenerator(randomAlphabet, Number(randomNumeral));
     }
@@ -60,6 +72,7 @@ function Ship(coords, length, type) {
         let checkBoundary;
         // console.log("?!", alph, num, isEmpty, trackingShipsUniqueCoords);
         // chekcingUniques(alph, num);
+        // console.log(isEmpty, "is")
         if(!isEmpty) {
             checkBoundary = num + 5 > 9;
             while(!checkBoundary) {
@@ -136,7 +149,8 @@ function Ship(coords, length, type) {
         shipCoords,
         shipLength,
         coordsGenerator,
-        trackingShipsUniqueCoords
+        trackingShipsUniqueCoords,
+        randomCoords
         // shipsRandomCoordsGenerator
         // fleetStatus,
         // allShipsHasSunk
