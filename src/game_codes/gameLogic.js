@@ -110,6 +110,8 @@ let game = () => {
 
     let beginPlay = () => {
         gameBoard.playersTurn();
+        // console.log(gameBoard.shipsHealth, "looking at ships health", gameBoard.humanCoords, gameBoard.computerCoords)
+        // gameBoard.checkAllShipsSank();
     }
 
     return {

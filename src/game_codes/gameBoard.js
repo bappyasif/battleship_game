@@ -14,6 +14,7 @@ function GameBoard(player) {
     let humanCoords = [];
     let playerTurnFlag = false;
     let filtered;
+    let loggingAllShotsFired = [];
 
     // let commenceAttack = ship(coords);
     let shipsHealth = {}
@@ -62,52 +63,97 @@ function GameBoard(player) {
     let getCoordsForComputer = (board) => {
         let [alph, num] = Ship().randomCoords();
         let checkCoords = [alph, num];
-        let checkSide = board.parentNode.className
+        let checkBoard = board.parentNode.className
         let found;
-        if(checkSide == 'human-board') {
-            found = checkHumanCoordsMatched(checkCoords, checkSide);
-            whichShipMods(checkCoords, humanCoords, checkSide);
+        let doesLogAlreadyExist
+        if(checkBoard == 'human-board') {
+            found = checkHumanCoordsMatched(checkCoords, checkBoard);
+            whichShipMods(checkCoords, humanCoords, checkBoard);
+            doesLogAlreadyExist = checkComputerCoordsAlreadyExistsInLogs(checkCoords);
 
             // found = checkComputerCoordsMatched(checkCoords, checkSide);
             // whichShipMods(checkCoords, computerCoords, checkSide);
         }
-        if(found) {
-            markShipBeingHit(checkCoords, checkSide);
+        // let doesLogAlreadyExist = checkComputerCoordsAlreadyExistsInLogs(checkCoords);
+        // let doesLogAlreadyExist = checkComputerCoordsAlreadyExistsInLogs(["A", "2"]);
+        // checkComputerCoordsAlreadyExistsInLogs(["A", "2"]);
+        // console.log(doesLogAlreadyExist);
+
+        // if(!doesLogAlreadyExist) {
+        //     if(found) {
+        //         markShipBeingHit(checkCoords, checkBoard);
+        //     } else {
+        //         if(checkCoords != undefined) {
+        //             loggingMissFiredShots.push({computer: checkCoords});
+        //             missHits(checkCoords, checkBoard)
+        //         }
+        //     }
+        // }
+
+        // if(found) {
+        //     markShipBeingHit(checkCoords, checkBoard);
+        // } else {
+        //     if(checkCoords != undefined) {
+        //         loggingMissFiredShots.push({computer: checkCoords});
+        //         missHits(checkCoords, checkBoard)
+        //     }
+        // }
+
+        if(found && !doesLogAlreadyExist) {
+            markShipBeingHit(checkCoords, checkBoard);
         } else {
-            loggingMissFiredShots.push({computer: checkCoords});
-            missHits(checkCoords, checkSide)
+            if(checkCoords != undefined) {
+                loggingMissFiredShots.push({computer: checkCoords});
+                missHits(checkCoords, checkBoard)
+            }
         }
+
+        loggingAllShotsFired.push(checkCoords);
+        // loggingAllShotsFired.push(["A","2"]);
+
+        // console.log(loggingAllShotsFired, "here!!")
         // console.log(found, checkCoords, checkSide)
+    }
+
+    let checkComputerCoordsAlreadyExistsInLogs = (coords) => {
+        let check = loggingAllShotsFired.map(log => log[0]==coords[0] && log[1]==coords[1]);
+        // console.log(coords, check, check.filter(v=>v==true).length);
+        return check.filter(v=>v==true).length;
     }
 
     let playersTurn = () => {
         let test = document.querySelector('.board-container-for-computer');
         let flag = true;
+        // checkAllShipsSank();
         test.addEventListener('click', (evt) => {
-            if(flag) {
-                // alert('player 2');
-                let board = document.querySelector('.board-container-for-computer');
-                // getCoordsFromClick(board);
-                gridClicked(evt);
-                flag = false;
+            if(evt.target.value != undefined) {
+                if(flag) {
+                    // alert('player 2');
+                    let board = document.querySelector('.board-container-for-computer');
+                    // getCoordsFromClick(board);
+                    gridClicked(evt);
+                    flag = false;
+                }
+                // alert('player 1');
+                let board = document.querySelector('.board-container');
+                getCoordsForComputer(board);
+                flag = true;
+            } else {
+                alert('already visited!!');
             }
-            // alert('player 1');
-            let board = document.querySelector('.board-container');
-            getCoordsForComputer(board);
-            flag = true;
         })
     }
 
     let gridClicked = (evt) => {
         let checkCoords = evt.target.value;
-        let checkSide = evt.target.parentNode.parentNode.className;
+        let checkBoard = evt.target.parentNode.parentNode.className;
         let found;
-        if(checkSide == 'computer-board') {
+        if(checkBoard == 'computer-board') {
             // found = checkHumanCoordsMatched(checkCoords, checkSide);
             // whichShipMods(checkCoords, humanCoords, checkSide);
 
-            found = checkComputerCoordsMatched(checkCoords, checkSide);
-            whichShipMods(checkCoords, computerCoords, checkSide);
+            found = checkComputerCoordsMatched(checkCoords, checkBoard);
+            whichShipMods(checkCoords, computerCoords, checkBoard);
             playerTurnFlag = true;
             // console.log("here!!")
         } 
@@ -116,10 +162,14 @@ function GameBoard(player) {
         //     whichShipMods(checkCoords, computerCoords, checkSide);
         // }
         if(found) {
-            markShipBeingHit(checkCoords, checkSide);
+            markShipBeingHit(checkCoords, checkBoard);
         } else {
+            // if(checkCoords != undefined) {
+            //     loggingMissFiredShots.push({human: checkCoords});
+            //     missHits(checkCoords, checkSide);
+            // }
             loggingMissFiredShots.push({human: checkCoords});
-            missHits(checkCoords, checkSide)
+            missHits(checkCoords, checkBoard)
         }
         // playerTurnFlag = true;
         // console.log("here!!", playerTurnFlag)
@@ -131,9 +181,13 @@ function GameBoard(player) {
                 return arr.some(cr => cr[0] == coords[0] && cr[1] == coords[1] ? true : false);
             }
         }).indexOf(true);
+        console.log("checking", check, coords, coordsArr, checkSide);
         if(check !== -1) {
             keepingTrackOfShips(check, checkSide);
-        }
+        } 
+        // else {
+        //     return false
+        // }
     }
 
     let checkHumanCoordsMatched = coords => {
@@ -141,6 +195,7 @@ function GameBoard(player) {
         if(coords != undefined) {
             found = humanCoords.flat(1).some(ar => ar[0] == coords[0] && ar[1] == coords[1]);
         }
+        // console.log(found, coords, "human-board", humanCoords);
         return found;
     }
 
@@ -152,8 +207,10 @@ function GameBoard(player) {
         return found;
     }
 
-    let keepingTrackOfShips = (idx, side) => {
-        if(side == 'human-board') {
+    let keepingTrackOfShips = (idx, player) => {
+        // console.log(idx, player, "::")
+        console.log(shipsHealth, "all ships"); // shipsHealth keys are not matching with board layout
+        if(player == 'human-board') {
             findingShipForAdjustingItsHealth(idx, 'human');
         } else {
             findingShipForAdjustingItsHealth(idx, 'computer');
@@ -162,48 +219,36 @@ function GameBoard(player) {
 
     let findingShipForAdjustingItsHealth = (idx, whichPlayer) => {
         let test;
-        for(let key in shipsHealth) {
-            if(key === whichPlayer+idx) {
-                shipsHealth[key].length--;
-                if(shipsHealth[key].length == 0) {
-                    shipSankedMods(whichPlayer, shipsHealth[key], idx)
-                    delete shipsHealth[key];
+        if(whichPlayer != undefined) {
+            for(let key in shipsHealth) {
+                // shipsHealth is not logging in all computer board's coords in it
+                // need to use another source for checking of shipsHealth instaed of shipsHealth
+                // as it's keys are not updating in accordance with our humanCoords array adjustsment
+                
+                console.log(idx, whichPlayer, "::", shipsHealth[whichPlayer+idx], shipsHealth )
+                if(key === whichPlayer+idx) {
+                    shipsHealth[key].length--;
+                    console.log(shipsHealth[key].length, "here!!", key, shipsHealth[key]);
+                    if(shipsHealth[key].length == 0) {
+                        shipSankedMods(whichPlayer, shipsHealth[key], idx)
+                        delete shipsHealth[key];
+                    } 
+                    // else if(computerCoords.length == 0 || humanCoords.length == 0) {
+                    //     checkAllShipsSank();
+                    // }
                 }
             }
         }
+        
     }
 
     let missHits = (coords, whichSide) => {
         // console.log(coords, whichSide, "misshits!!")
         let board = returnAnyGameBoard(whichSide);
         // console.log('misshits', loggingMissFiredShots);
-        checkMissedCoordsAlreadyBeenVisited(coords, whichSide);
+        // checkMissedCoordsAlreadyBeenVisited(coords, whichSide);
+        // missHitsdAlreadyVisited(coords, whichSide);
         markingMissesOnBoard(board, coords)
-    }
-
-    let checkMissedCoordsAlreadyBeenVisited = (coords, whichSide) => {
-        // console.log('misshits', loggingMissFiredShots, coords, whichSide);
-        
-        if(whichSide.includes('computer-')) {
-            // console.log('misshitsOnHumanSide', coords, whichSide);
-            filtered = returnFilteredMissedCoords('human');
-        } else {
-            console.log('misshitsOnComputerSide', coords, whichSide, loggingMissFiredShots);
-            filtered = returnFilteredMissedCoords('computer');
-        }
-        console.log(filtered, "filtered")
-    }
-
-    let returnFilteredMissedCoords = (whichSide) => {
-        let filtered = [];
-        loggingMissFiredShots.forEach(logs => {
-            let keys = Object.keys(logs);
-            console.log(keys);
-            if(keys.includes(whichSide)) {
-                filtered.push(logs[keys]);
-            }
-        })
-        return filtered;
     }
 
     let returnAnyGameBoard = (whichSide) => {
@@ -217,11 +262,13 @@ function GameBoard(player) {
     }
 
     let markingMissesOnBoard = (board, coords) => {
+        // missHitsdAlreadyVisited();
         if(board) { 
             Array.from(board.children).forEach(grid => {
                 if(grid.value[0] == coords[0] && grid.value[1] == coords[1]) {
-                    grid.textContent = "O";
-                    grid.classList.add("unclickable", "ship-hitted");
+                    grid.textContent = "X";
+                    // grid.classList.add("unclickable", "ship-hitted");
+                    grid.classList.add("unclickable", "miss-fired");
                 }
             });
         }
@@ -229,6 +276,7 @@ function GameBoard(player) {
 
     let markShipBeingHit = (coords, whichSide) => {
         let board = returnAnyGameBoard(whichSide);
+        console.log('hits', board);
         // if(whichSide.split("-")[0] == 'human') {
         //     board = document.querySelector('.board-container');
         // } else {
@@ -238,7 +286,7 @@ function GameBoard(player) {
         if(board) { 
             Array.from(board.children).forEach((grid, idx) => {
                 if(grid.value[0] == coords[0] && grid.value[1] == coords[1]) {
-                    grid.textContent = "X";
+                    grid.textContent = "O";
                     grid.classList.add("unclickable", "ship-hitted");
                 }
             });
@@ -247,15 +295,17 @@ function GameBoard(player) {
 
     let shipSankedMods = (whichPlayer, whichShip, idx) => {
         let board;
+        console.log('??', whichPlayer, whichShip, idx)
         if(whichPlayer == 'human') {
             board = document.querySelector('.board-container');
         } else {
             board = document.querySelector('.board-container-for-computer');
         }
-        disablingShipOnBoard(whichShip, idx, board);
+        disablingShipAfterHit(whichShip, idx, board);
+        checkAllShipsSank();
     }
 
-    let disablingShipOnBoard = (ship, idx, board) => {
+    let disablingShipAfterHit = (ship, idx, board) => {
         console.log("ship sanked mods", ship, idx, board)
         if(board) {
             Array.from(board.children).forEach(grid => {
@@ -265,13 +315,14 @@ function GameBoard(player) {
                     grid.classList.add('unclickable');
                    }
                })
-               return;
+            //    break;
             })
             updateExistingShipCoords(idx, board.parentNode.className);
         }
     }
 
     let updateExistingShipCoords = (idx, whichSideShipCoords) => {
+        // console.log(computerCoords, humanCoords, "whatwhat?!", whichSideShipCoords.includes('computer'));
         let filteredHumanShips = [];
         let filteredComputerShips = [];
         if(whichSideShipCoords.split("-")[0] == 'human') {
@@ -289,6 +340,9 @@ function GameBoard(player) {
             }
             computerCoords = filteredComputerShips;       
         }
+        // console.log(filteredHumanShips, filteredComputerShips, "yoyo!!", humanCoords, computerCoords)
+        // humanCoords = filteredHumanShips;
+        // computerCoords = filteredComputerShips;
     }
 
     let removingShipsFromBoard = (board) => {
@@ -300,6 +354,13 @@ function GameBoard(player) {
 
     let checkAllShipsSank = () => {
         // commenceAttack.allShipsHasSunk();
+        // if(computerCoords)
+        // console.log(computerCoords, humanCoords, "<>");
+        if(computerCoords.length == 0) {
+            console.log(computerCoords, 'human wins');
+        } else if(humanCoords.length == 0) {
+            console.log(humanCoords, 'computer wins');
+        }
     }
     
     let populateBoardOnDOM = (num) => {
@@ -359,13 +420,148 @@ function GameBoard(player) {
         removingShipsFromBoard,
         getCoordsForComputer,
         playerTurnFlag,
-        playersTurn
+        playersTurn,
+        checkAllShipsSank
     }
 }
 
 module.exports = GameBoard;
 
 /**
+ * 
+ * 
+ let getCoordsForComputer = (board) => {
+        let [alph, num] = Ship().randomCoords();
+        let checkCoords = [alph, num];
+        let checkBoard = board.parentNode.className
+        let found;
+        if(checkBoard == 'human-board') {
+            found = checkHumanCoordsMatched(checkCoords, checkBoard);
+            whichShipMods(checkCoords, humanCoords, checkBoard);
+
+            // found = checkComputerCoordsMatched(checkCoords, checkSide);
+            // whichShipMods(checkCoords, computerCoords, checkSide);
+        }
+        let doesLogAlreadyExist = checkComputerCoordsAlreadyExistsInLogs(checkCoords);
+        // let doesLogAlreadyExist = checkComputerCoordsAlreadyExistsInLogs(["A", "2"]);
+        // checkComputerCoordsAlreadyExistsInLogs(["A", "2"]);
+        // console.log(doesLogAlreadyExist);
+
+        // while(!doesLogAlreadyExist) {
+        //     if(found) {
+        //         markShipBeingHit(checkCoords, checkBoard);
+        //     } else {
+        //         if(checkCoords != undefined) {
+        //             loggingMissFiredShots.push({computer: checkCoords});
+        //             missHits(checkCoords, checkBoard)
+        //         }
+        //     }
+        //     loggingAllShotsFired.push(checkCoords); 
+        // }
+
+        // if(found && !doesLogAlreadyExist) {
+        //     markShipBeingHit(checkCoords, checkBoard);
+        // } else {
+        //     if(checkCoords != undefined) {
+        //         loggingMissFiredShots.push({computer: checkCoords});
+        //         missHits(checkCoords, checkBoard)
+        //     }
+        //     // loggingMissFiredShots.push({computer: checkCoords});
+        //     // missHits(checkCoords, checkSide)
+        // }
+
+        // if(!doesLogAlreadyExist) {
+        //     if(found) {
+        //         markShipBeingHit(checkCoords, checkBoard);
+        //     } else {
+        //         if(checkCoords != undefined) {
+        //             loggingMissFiredShots.push({computer: checkCoords});
+        //             missHits(checkCoords, checkBoard)
+        //         }
+        //     }
+        // }
+
+        if(found) {
+            markShipBeingHit(checkCoords, checkBoard);
+        } else {
+            if(checkCoords != undefined) {
+                loggingMissFiredShots.push({computer: checkCoords});
+                missHits(checkCoords, checkBoard)
+            }
+        }
+
+        // if(found && !doesLogAlreadyExist) {
+        //     markShipBeingHit(checkCoords, checkBoard);
+        // } else {
+        //     if(checkCoords != undefined) {
+        //         loggingMissFiredShots.push({computer: checkCoords});
+        //         missHits(checkCoords, checkBoard)
+        //     }
+        // }
+
+        loggingAllShotsFired.push(checkCoords);
+        // loggingAllShotsFired.push(["A","2"]);
+
+        // console.log(loggingAllShotsFired, "here!!")
+        // console.log(found, checkCoords, checkSide)
+    }
+ * 
+ * 
+ let missHitsdAlreadyVisited = (coords, whichSide) => {
+    //     // console.log('missHitsFiltered', filtered, missFiltered);
+    //     // let checkCoordsLoggedAlready = 
+    //     let check;
+    //     let test;
+    //     console.log('logging misses', loggingMissFiredShots, coords, whichSide);
+    //     if(whichSide.includes('computer')) {
+    //         test = returnFilteredMissedCoords('human');
+    //         check = confirmMatches(coords, test, 'human');
+    //     } else {
+    //         test = returnFilteredMissedCoords('computer');
+    //         check = confirmMatches(coords, test, 'computer');
+    //     }
+
+    //     // check = confirmMatches(coords, test, whichSide);
+    //     console.log(check, "is it?!");
+    // }
+
+    // let confirmMatches = (coords, filtered, whichSide) => {
+    //     console.log(coords, filtered, whichSide, "here!!");
+    //     // let side = whichSide.split('-')[0];
+    //     // console.log("here!!", coords, filtered, whichSide, side);
+    //     // loggingMissFiredShots.forEach(arr => {
+    //     //     // console.log(arr['human'], arr);
+    //     //     if(arr['human'][0] == coords[0] && arr['human'][1] == coords[1]) {
+    //     //         console.log(arr['human'], arr);
+    //     //     }
+    //     // })        
+    // }
+
+    // let checkMissedCoordsAlreadyBeenVisited = (coords, whichSide) => {
+    //     // console.log('misshits', loggingMissFiredShots, coords, whichSide);
+    //     // let filtered;
+    //     if(whichSide.includes('computer-')) {
+    //         // console.log('misshitsOnHumanSide', coords, whichSide);
+    //         filtered = returnFilteredMissedCoords('human');
+    //     } else {
+    //         // console.log('misshitsOnComputerSide', coords, whichSide, loggingMissFiredShots);
+    //         filtered = returnFilteredMissedCoords('computer');
+    //     }
+    //     missFiltered.push(filtered);
+    //     console.log(filtered, "filtered")
+    // }
+
+    // let returnFilteredMissedCoords = (whichSide) => {
+    //     let filtered = [];
+    //     loggingMissFiredShots.forEach(logs => {
+    //         let keys = Object.keys(logs);
+    //         console.log(keys);
+    //         if(keys.includes(whichSide)) {
+    //             filtered.push(logs[keys]);
+    //         }
+    //     })
+    //     return filtered;
+    // }
  * 
  * 
  let playersTurn = () => {
