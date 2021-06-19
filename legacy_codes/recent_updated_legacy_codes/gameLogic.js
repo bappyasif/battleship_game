@@ -45,6 +45,7 @@ let game = () => {
         let board = document.querySelector('.board-container');
 
         let shipCoords = ship.coordsGenerator();
+        // let shipCoords = Ship().coordsGenerator();
         
         gameBoard.humanCoords.push(shipCoords);
         
@@ -52,6 +53,12 @@ let game = () => {
 
         gameBoard.shipsHealth['human'+idx] = {coords: shipCoords, length: shipCoords.length, remainingLength: shipCoords.length};
 
+        // beginPlay(gameBoard.shipsHealth, null);
+        // humanFleetShipsCoords.push(gameBoard.shipsHealth);
+        // beginPlay(shipCoords);
+        // combinedCoords.push(shipCoords);
+        // beginPlay();
+        // console.log(combinedCoords, "human")
         humanFleetShipsCoords.push(shipCoords);
     }
 
@@ -69,6 +76,8 @@ let game = () => {
 
     let computerShips = (idx, ship) => {
         let shipCoords = ship.coordsGenerator();
+        // let shipCoords = Ship().coordsGenerator();
+        // console.log(shipCoords, "!!");
 
         let board = document.querySelector('.board-container-for-computer');
 
@@ -78,6 +87,12 @@ let game = () => {
 
         gameBoard.shipsHealth['computer'+idx] = {coords: shipCoords, length: shipCoords.length, remainingLength: shipCoords.length};
 
+        // beginPlay(null,gameBoard.shipsHealth);
+        // computerFleetShipsCoords.push(gameBoard.shipsHealth)
+        // beginPlay(shipCoords);
+        // combinedCoords.push(shipCoords);
+        // beginPlay();
+        // console.log(combinedCoords, "computer");
         computerFleetShipsCoords.push(shipCoords)
     }
 
@@ -95,6 +110,8 @@ let game = () => {
 
     let beginPlay = () => {
         gameBoard.playersTurn();
+        // console.log(gameBoard.shipsHealth, "looking at ships health", gameBoard.humanCoords, gameBoard.computerCoords)
+        // gameBoard.checkAllShipsSank();
     }
 
     return {
@@ -110,3 +127,82 @@ let game = () => {
 }
 
 module.exports = game;
+
+/**
+ * 
+ * 
+     let beginPlay = () => {
+        let flag = false;
+        let wait = true;
+        for(let i=0; i<4; i++) {
+            if(i%2!=0 && flag) {
+                // computer turn
+                board = document.querySelector('.board-container');
+                gameBoard.getCoordsForComputer(board);
+                flag = false;
+            } else {
+                // humans turn
+                board = document.querySelector('.board-container-for-computer');
+                gameBoard.getCoordsFromClick(board);
+                while(gameBoard.playerTurnFlag) {
+                    flag = true;
+                }
+            }
+        }
+    }
+ * 
+ * 
+ let beginPlay = () => {
+        let flag = false;
+        let wait = true;
+        for(let i=0; i<4; i++) {
+            if(i%2!=0) {
+                // computer turn
+                while(flag && wait) {
+                    board = document.querySelector('.board-container');
+                    // gameBoard.getCoordsForComputer(board);
+                    flag = false;
+                    if(wait) {
+                        gameBoard.getCoordsForComputer(board);
+                        wait = false
+                    }
+                    // wait = false
+                }
+            } else {
+                // humans turn
+                while(!flag && !wait) {
+                    board = document.querySelector('.board-container-for-computer');
+                    gameBoard.getCoordsFromClick(board);
+                    flag = true;
+                    wait = true;
+                }
+            }
+        }
+    }
+ * 
+ * 
+ let beginPlay = () => {
+        let flag = false;
+        // console.log(humanFleetShipsCoords, computerFleetShipsCoords);
+        let board;
+        let count = 0;
+        while(count < 4) {
+            if(!flag) {
+                board = document.querySelector('.board-container-for-computer');
+                gameBoard.getCoordsFromClick(board);
+                flag = true;
+                console.log(flag);
+            } else {
+                board = document.querySelector('.board-container');
+                // when selecting coords from mouse click
+                // gameBoard.getCoordsFromClick(board);
+                // when randomly coords selected for computer
+                gameBoard.getCoordsForComputer(board);
+                flag = false;
+                console.log(flag);
+            }
+            count++;
+        }
+
+    }
+ */
