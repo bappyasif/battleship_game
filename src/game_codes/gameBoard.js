@@ -63,19 +63,21 @@ function GameBoard(player) {
             // whichShipMods(checkCoords, computerCoords, checkSide);
         }
 
-        if(found && !doesLogAlreadyExist) {
+        if(found) {
             console.log('hits!!', checkCoords, checkCoords[1], checkBoard);
+            // we need to find a way to take out those computer ships coords after being hit from humanCoords array
+            // removeVisitedCoordsFromHumanCoords(checkCoords);
             checkCoordsBoundaryToImproveAccuracy(checkCoords)
             markShipBeingHit(checkCoords, checkBoard);
         } else {
-            if(checkCoords != undefined) {
+            if(checkCoords != undefined || !doesLogAlreadyExist) {
                 // doesLogAlreadyExist needs some tweaking, currently, it still goes to already visited coords fr computer
                 console.log('is undefined?!', checkCoords);
                 loggingMissFiredShots.push({computer: checkCoords});
                 missHits(checkCoords, checkBoard)
             }
         }
-
+        
         loggingAllShotsFired.push(checkCoords);
         // loggingAllShotsFired.push(["A","2"]);
     }
@@ -87,6 +89,7 @@ function GameBoard(player) {
             arr.forEach((pair) => {
                 if(pair[0] == coords[0] && pair[1] == coords[1]) {
                     checkIndex = idx;
+                    // loggingAllShotsFired.push(pair);
                 }
             })
         })
@@ -96,42 +99,46 @@ function GameBoard(player) {
         filteringIntlMovesCoords(coords);
         // console.log('intl- after', intelligentMoves)
         // console.log('intl', intelligentMoves)
+        // loggingAllShotsFired.push(coords);
     }
 
     let checkComputerCoordsAlreadyExistsInLogs = (coords) => {
         let check = loggingAllShotsFired.map(log => log[0]==coords[0] && log[1]==coords[1]);
         // console.log(coords, check, check.filter(v=>v==true).length);
+        // console.log(JSON.stringify(loggingAllShotsFired), check)
         return check.filter(v=>v==true).length;
+    }
+
+    let removeVisitedCoordsFromHumanCoords = (coords) => {
+        // let check = humanCoords.map(arr=>arr.some(cr=>cr[0]==coords[0] && cr[1]==coords[1] ? false: arr))
+        // console.log(check, "<>")
+        
     }
 
     let playersTurn = () => {
         let test = document.querySelector('.board-container-for-computer');
+        // console.log("test", test);
         let flag = true;
         test.addEventListener('click', (evt) => {
             if(evt.target.value != undefined) {
                 if(flag) {
                     // alert('player 2');
-                    // let board = document.querySelector('.board-container-for-computer');
-                    // getCoordsFromClick(board);
                     gridClicked(evt);
                     flag = false;
                 }
                 // alert('player 1');
                 let board = document.querySelector('.board-container');
-                // getCoordsForComputer(board);
+                // let found = checkHumanCoordsMatched(checkCoords, checkBoard);
                 if(intelligentMoves.length == 0) {
                     getCoordsForComputer(board);
                 } else {
-                    // let checkCoords = evt.target.value;
-                    // randomlySelectingIntlCoords();
-                    // console.log(randomlySelectingIntlCoords(), "randomCoords");
-                    // let selectingCoords = randomlySelectingIntlCoords()[0];
-                    // let rand = randomlySelectingIntlCoords()[1];
-                    // console.log(rand, "here?!");
-                    // updatingIntl(rand);
                     let selectingCoords = randomlySelectingIntlCoords();
+                    loggingAllShotsFired.push(selectingCoords);
+                    // here needs a if same coords already exist or not check!!
+                    whichShipMods(selectingCoords, humanCoords, 'human-board');
                     markShipBeingHit(selectingCoords, 'human-board');
                     filteringIntlMovesCoords(selectingCoords);
+                    // flag = true;
                 }
                 flag = true;
             } else {
@@ -162,17 +169,13 @@ function GameBoard(player) {
             found = checkComputerCoordsMatched(checkCoords, checkBoard);
             whichShipMods(checkCoords, computerCoords, checkBoard);
             playerTurnFlag = true;
+            if(found) {
+                markShipBeingHit(checkCoords, checkBoard);
+            } else {
+                loggingMissFiredShots.push({human: checkCoords});
+                missHits(checkCoords, checkBoard)
+            }
         } 
-        if(found) {
-            markShipBeingHit(checkCoords, checkBoard);
-        } else {
-            // if(checkCoords != undefined) {
-            //     loggingMissFiredShots.push({human: checkCoords});
-            //     missHits(checkCoords, checkSide);
-            // }
-            loggingMissFiredShots.push({human: checkCoords});
-            missHits(checkCoords, checkBoard)
-        }
     }
 
     let whichShipMods = (coords, coordsArr, checkSide) => {
@@ -183,10 +186,12 @@ function GameBoard(player) {
         }).indexOf(true);
         // console.log("checking", check, coords, coordsArr, checkSide);
         // console.log("length", coordsArr[check].length);
+        console.log("check::", check);
         if(check !== -1) {
             // console.log("length", coordsArr[check].length);
             let length = coordsArr[check].length;
             keepingTrackOfShips(check, checkSide, length);
+            // loggingAllShotsFired.push(coords);
         } 
     }
 
@@ -195,6 +200,7 @@ function GameBoard(player) {
         if(coords != undefined) {
             found = humanCoords.flat(1).some(ar => ar[0] == coords[0] && ar[1] == coords[1]);
         }
+        // loggingAllShotsFired.push(coords);
         // console.log(found, coords, "human-board", humanCoords);
         return found;
     }
@@ -221,8 +227,10 @@ function GameBoard(player) {
 
     let adjustingPlayersShipHealth = (idx, whichBoard, shipLength) => {
         for(let key in shipsHealth) {
+            console.log(shipsHealth, whichBoard, idx, "<>")
             if(key.includes(whichBoard)) {
                 if(shipsHealth[key].length == shipLength && key.indexOf(idx) != -1) {
+                    console.log(shipsHealth[key].remainingLength, "??")
                     shipsHealth[key].remainingLength--;
                     if(shipsHealth[key].remainingLength == 0) {
                         shipSankedMods(whichBoard,shipsHealth[key],idx)
@@ -315,12 +323,12 @@ function GameBoard(player) {
         if(whichBoard == 'human') {
             // console.log('allShipsHumanBoard', shipsHealth)
             if(checkWinner(whichBoard)) {
-                console.log('computer wins!!')
+                console.log('computer wins!!');
             }
         } else {
             // console.log('allShipsComputerBoard', shipsHealth)
             if(checkWinner(whichBoard)) {
-                console.log('human wins!!')
+                console.log('human wins!!');
             }
         }
     }
@@ -390,6 +398,124 @@ function GameBoard(player) {
 module.exports = GameBoard;
 
 /**
+ * 
+ * 
+ let playersTurn = () => {
+        let test = document.querySelector('.board-container-for-computer');
+        // console.log("test", test);
+        let flag = true;
+        test.addEventListener('click', (evt) => {
+            if(evt.target.value != undefined) {
+                if(flag) {
+                    // alert('player 2');
+                    // let board = document.querySelector('.board-container-for-computer');
+                    // getCoordsFromClick(board);
+                    gridClicked(evt);
+                    flag = false;
+                }
+                // alert('player 1');
+                let board = document.querySelector('.board-container');
+                // getCoordsForComputer(board);
+                if(intelligentMoves.length == 0) {
+                    getCoordsForComputer(board);
+                } else {
+                    // let checkCoords = evt.target.value;
+                    // randomlySelectingIntlCoords();
+                    // console.log(randomlySelectingIntlCoords(), "randomCoords");
+                    // let selectingCoords = randomlySelectingIntlCoords()[0];
+                    // let rand = randomlySelectingIntlCoords()[1];
+                    // console.log(rand, "here?!");
+                    // updatingIntl(rand);
+                    let selectingCoords = randomlySelectingIntlCoords();
+                    loggingAllShotsFired.push(selectingCoords);
+                    whichShipMods(selectingCoords, humanCoords, 'human-board');
+                    markShipBeingHit(selectingCoords, 'human-board');
+                    filteringIntlMovesCoords(selectingCoords);
+                    // flag = true;
+                }
+                flag = true;
+            } else {
+                alert('already visited!!');
+            }
+        })
+    }
+
+    let gridClicked = (evt) => {
+        let checkCoords = evt.target.value;
+        let checkBoard = evt.target.parentNode.parentNode.className;
+        let found;
+        if(checkBoard == 'computer-board') {
+            found = checkComputerCoordsMatched(checkCoords, checkBoard);
+            whichShipMods(checkCoords, computerCoords, checkBoard);
+            playerTurnFlag = true;
+            if(found) {
+                markShipBeingHit(checkCoords, checkBoard);
+            } else {
+                // if(checkCoords != undefined) {
+                //     loggingMissFiredShots.push({human: checkCoords});
+                //     missHits(checkCoords, checkSide);
+                // }
+                loggingMissFiredShots.push({human: checkCoords});
+                missHits(checkCoords, checkBoard)
+            }
+        } 
+        // if(found) {
+        //     markShipBeingHit(checkCoords, checkBoard);
+        // } else {
+        //     // if(checkCoords != undefined) {
+        //     //     loggingMissFiredShots.push({human: checkCoords});
+        //     //     missHits(checkCoords, checkSide);
+        //     // }
+        //     loggingMissFiredShots.push({human: checkCoords});
+        //     missHits(checkCoords, checkBoard)
+        // }
+    }
+ * 
+ * 
+     let getCoordsForComputer = (board) => {
+        let [alph, num] = Ship().randomCoords();
+        let checkCoords = [alph, num];
+        let checkBoard = board.parentNode.className
+        let found;
+        let doesLogAlreadyExist
+
+        // doesLogAlreadyExist = checkComputerCoordsAlreadyExistsInLogs(checkCoords);
+
+        if(checkBoard == 'human-board') {
+            found = checkHumanCoordsMatched(checkCoords, checkBoard);
+            whichShipMods(checkCoords, humanCoords, checkBoard);
+            // doesLogAlreadyExist = checkComputerCoordsAlreadyExistsInLogs(checkCoords);
+
+            // found = checkComputerCoordsMatched(checkCoords, checkSide);
+            // whichShipMods(checkCoords, computerCoords, checkSide);
+        }
+        // loggingAllShotsFired.push(checkCoords);
+        // doesLogAlreadyExist = checkComputerCoordsAlreadyExistsInLogs(checkCoords);
+
+        if(found) {
+            // whichShipMods(checkCoords, humanCoords, checkBoard);
+            doesLogAlreadyExist = checkComputerCoordsAlreadyExistsInLogs(checkCoords);
+            console.log('hits!!', checkCoords, checkCoords[1], checkBoard);
+            checkCoordsBoundaryToImproveAccuracy(checkCoords)
+            markShipBeingHit(checkCoords, checkBoard);
+            // loggingAllShotsFired.push(checkCoords);
+        } else {
+            if(checkCoords != undefined && !doesLogAlreadyExist) {
+                // doesLogAlreadyExist needs some tweaking, currently, it still goes to already visited coords fr computer
+                // it's which coords are being recorded when there is a ship inside?!
+                // console.log('is undefined?!', checkCoords);
+                loggingMissFiredShots.push({computer: checkCoords});
+                missHits(checkCoords, checkBoard)
+                // loggingAllShotsFired.push(checkCoords);
+            } 
+            // else {
+            //     getCoordsForComputer(board);
+            // }
+        }
+
+        loggingAllShotsFired.push(checkCoords);
+        // loggingAllShotsFired.push(["A","2"]);
+    }
  * 
  * 
      let checkCoordsBoundaryToImproveAccuracy = (coords) => {
