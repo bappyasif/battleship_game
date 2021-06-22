@@ -1,0 +1,112 @@
+body{
+    background-color: green;
+    /* text-align: center; */
+    color: silver;
+}
+
+.game-container {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.board-container, .board-container-for-computer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    margin: 1.1px;
+    /* margin: auto; */
+}
+
+.board-grids, .ship-placed {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 33px;
+    height: 29px;
+    color: green;
+    background-color: burlywood;
+    margin-top: 2px;
+}
+
+.board-grids:hover, .ship-placed:hover {
+    font-size: large;
+}
+
+.human-board, .computer-board {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 50vw;
+    color: cadetblue;
+    background-color: silver;
+    margin: 2px;
+}
+
+.ship-placed {
+    /* background-color: blue; */
+    background-color: inherit;
+    /* height: fit-content; */
+    /* color: transparent; */
+}
+
+.unclickable {
+    pointer-events: none;
+}
+
+.ship-hitted {
+    background-color: rgb(245, 116, 11);
+    opacity: 29%;
+    color: crimson;
+    font-size: medium;
+}
+
+.miss-fired {
+    /* background-color: crimson; */
+    color: crimson;
+    font-weight: bolder;
+    font-size: medium;
+}
+
+.disabled-btn {
+    color: red;
+    opacity: 50%;
+}
+
+.game-play {
+    display: flex;
+    /* margin: 11px; */
+    flex-direction: column;
+    align-items: center;
+    width: fit-content;
+    margin: auto;
+    /* border: crimson 2px dashed; */
+    background-color: aqua;
+    height: auto;
+}
+
+.winner, .play-again {
+    position: absolute;
+    margin-top: 170px;
+    color: crimson;
+    border: crimson 2px dashed;
+    background-color: aqua;
+    display: none;
+    /* z-index: 1; */
+}
+
+.boards-behind {
+    z-index: -1;
+}
+
+.winner {
+    margin-bottom: 11px;
+}
+
+.play-again {
+    margin-top: 200px;
+}
+
+.winner:hover, .play-again:hover {
+    font-size: x-large;
+}
