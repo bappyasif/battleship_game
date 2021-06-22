@@ -8,7 +8,6 @@ let game = () => {
     let computer = Player('computer', 5);
     // let ship = Ship();
     let gameBoard = GameBoard();
-    // let ship =  Ship();
     let computerFleetShipsCoords = [];
     let humanFleetShipsCoords = [];
     let combinedCoords = [];
@@ -16,6 +15,7 @@ let game = () => {
     let ready = {};
     // creating human player battleship game board with a grid of 10X10
     let creatingHumanGameBoard = () => {
+        // let gameBoard = GameBoard(human);
         let humanBoard = gameBoard.creatingGridsForHuman(10);
         let board = document.querySelector('.human-board');
         if(board) board.append(humanBoard);
@@ -23,6 +23,7 @@ let game = () => {
 
     // creating computer player battleship game board with a grid of 10X10
     let creatingComputerGameBoard = () => {
+        // let gameBoard = GameBoard(computer);
         let computerBoard = gameBoard.creatingGridsForComputer(10);
         let board = document.querySelector('.computer-board');
         if(board) board.append(computerBoard);
@@ -33,7 +34,6 @@ let game = () => {
         let i = 0;
         let ship =  Ship();
         // gameBoard.humanCoords = [];
-        // gameBoard.freshCoords();
         do{
             // buildingShips(i);
             buildingShips(i, ship);
@@ -106,13 +106,11 @@ let game = () => {
     }
 
     let reArrangeHumanFleet = () => {
-        // removeHumanGameBoard();
-        // creatingHumanGameBoard();
+        removeHumanGameBoard();
+        creatingHumanGameBoard();
         // gameBoard.humanCoords = [];
-        let board = document.querySelector('.board-container');
-        gameBoard.removingShipsFromBoard(board);
+        // gameBoard.removingShipsFromBoard(board);
         setTimeout(()=>humanFleets(), 1001);
-        console.log('human coords', gameBoard.humanCoords);
     }
 
     let reArrangeComputerFleet = (board) => {
@@ -136,16 +134,18 @@ let game = () => {
     let playAgain = () => {
     let humanBoard = document.querySelector('.board-container');
     let computerBoard = document.querySelector('.board-container-for-computer');
-    
     humanBoard.remove();
     computerBoard.remove();
-    
+    // gameBoard.removingShipsFromBoard(humanBoard);
+    // gameBoard.removingShipsFromBoard(computerBoard);
+    // gameBoard.humanCoords = [];
+    // gameBoard.computerCoords = [];
+    // gameBoard.removingPreviousBoardGrids();
     creatingComputerGameBoard();
     creatingHumanGameBoard();
     humanFleets();
     computerFleet();
     beginPlay();
-    
     }
 
     let waitComputerBeReady = () => {
@@ -176,18 +176,22 @@ let game = () => {
             btn.classList.add('unclickable', 'disabled-btn');
             btnReady.classList.add('unclickable', 'disabled-btn');
             ready.human = true;
+            
+            // game starts when human player is ready
+            // gameBoard.playersTurn();
+            // startGame();
+            // return true;
         });
     }
 
     let beginPlay = () => {
         let winner = document.querySelector('.winner');
         let playAgain = document.querySelector('.play-again');
-        
         winner.style.display = 'none';
         playAgain.style.display = 'none';
-        
+        // gameBoard.computerCoords = [];
+        // gameBoard.humanCoords = [];
         gameBoard.playersTurn();
-
         // waitComputerBeReady();
         // humanPlayerBeReady();
         // startGame()
@@ -227,3 +231,42 @@ let game = () => {
 }
 
 module.exports = game;
+
+/**
+ * 
+ * 
+ let waitPlayersBeReady = () => {
+        let ready = {}
+        // for human we'll prompt and accept y or n
+        setTimeout(() => {
+            let ans = prompt('you ready to play?', "y");
+            if(ans == 'y' || 'Y' || 'yes' || 'YES' || 'Yes') {
+                ready.human = true;
+            }
+        }, 2000)
+
+        // for computer we'll randomize thios process
+        let rand = () => Math.random();
+        if(rand() > .5) {
+            reArrangeComputerFleet();
+            ready.computer = true;
+        } else {
+            rand();
+        }
+
+        if(ready.computer && ready.human) return true;
+    }
+ * 
+ * 
+ // let reArrangeShipsFormations = (evt, board) => {
+    //     // console.log(evt.target.className);
+    //     // for human
+    //     let board = document.querySelector('.board-container');
+    //     gameBoard.removingShipsFromBoard(board);
+    //     setTimeout(()=>humanFleets(), 1001);
+    //     // for computer
+    //     board = document.querySelector('.board-container-for-computer');
+    //     gameBoard.removingShipsFromBoard(board);
+    //     setTimeout(()=>computerFleet(), 1001);
+    // }
+ */
