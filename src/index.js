@@ -16,8 +16,9 @@ let startAgain = () => {
     Game.removeHumanGameBoard();
     Game.creatingComputerGameBoard();
     Game.creatingHumanGameBoard();
-    Game.humanFleets();
+    // Game.humanFleets();
     Game.computerFleet();
+    Game.humanFleets();
     Game.beginPlay();
 }
 

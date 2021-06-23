@@ -8,6 +8,7 @@ function GameBoard(player) {
     let loggingHits = [];
     let computerCoords = [];
     let humanCoords = [];
+    let humanCoordsMods = [];
     let playerTurnFlag = false;
     let filtered;
     let intelligentMoves = [];
@@ -29,6 +30,8 @@ function GameBoard(player) {
     }
 
     let placeShips = (coords, board) => {
+        console.log(coords, "here!!");
+        humanCoordsMods.push(coords);
         if(board) {
             Array.from(board.children).forEach((grid) => {
                 let idx = 0;
@@ -55,10 +58,13 @@ function GameBoard(player) {
         let found;
         // let doesLogAlreadyExist
         let alreadyVisited = checkCoordsExistInAllShots(checkCoords);
+        console.log(alreadyVisited, checkCoords, "here!!", humanCoordsMods);
         if(checkBoard == 'human-board' && !alreadyVisited) {
             found = checkHumanCoordsMatched(checkCoords, checkBoard);
-            whichShipMods(checkCoords, humanCoords, checkBoard);
+            // whichShipMods(checkCoords, humanCoords, checkBoard);
+            console.log(found, whichShipMods(checkCoords, humanCoords, checkBoard), humanCoords, computerCoords)
             if(found) {
+                whichShipMods(checkCoords, humanCoords, checkBoard);
                 checkCoordsBoundaryToImproveAccuracy(checkCoords)
                 markShipBeingHit(checkCoords, checkBoard);
                 // console.log("found!!", checkCoords)
@@ -67,14 +73,15 @@ function GameBoard(player) {
                 loggingMissFiredShots.push({computer: checkCoords});
                 if(!alreadyVisited) {
                     missHits(checkCoords, checkBoard)
-                } else {
+                } 
+                else {
                     getCoordsForComputer(board)
                 }
             }
         } 
-        // else {
-        //     getCoordsForComputer(board)
-        // }
+        else {
+            getCoordsForComputer(board)
+        }
         
         loggingAllShotsFired.push(checkCoords);
     }
@@ -105,7 +112,7 @@ function GameBoard(player) {
 
     let playersTurn = () => {
         let turns = document.querySelector('.board-container-for-computer');
-        
+
         let flag = true;
         turns.addEventListener('click', (evt) => {
             if(evt.target.value != undefined) {
@@ -179,8 +186,10 @@ function GameBoard(player) {
 
     let checkHumanCoordsMatched = coords => {
         let found;
+        let found2;
         if(coords != undefined) {
             found = humanCoords.flat(1).some(ar => ar[0] == coords[0] && ar[1] == coords[1]);
+            console.log(humanCoordsMods, "??!!")
         }
         // console.log(found, coords, "human-board", humanCoords);
         return found;

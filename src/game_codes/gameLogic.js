@@ -6,7 +6,7 @@ let game = () => {
     // main game loop and DOM interaction
     let human = Player('human', 5);
     let computer = Player('computer', 5);
-    // let ship = Ship();
+    let ship = Ship();
     let gameBoard = GameBoard();
     // let ship =  Ship();
     let computerFleetShipsCoords = [];
@@ -31,7 +31,7 @@ let game = () => {
     // placing ships on game board for human player
     let humanFleets = () => {
         let i = 0;
-        let ship =  Ship();
+        // let ship =  Ship();
         // gameBoard.humanCoords = [];
         // gameBoard.freshCoords();
         do{
@@ -54,6 +54,7 @@ let game = () => {
         gameBoard.humanCoords.push(shipCoords);
         
         // GameBoard(human).placeShips(shipCoords, board);
+        console.log(shipCoords, 'humans coords');
         gameBoard.placeShips(shipCoords, board);
 
         gameBoard.shipsHealth['human'+idx] = {coords: shipCoords, length: shipCoords.length, remainingLength: shipCoords.length};
@@ -61,22 +62,27 @@ let game = () => {
         humanFleetShipsCoords.push(shipCoords);
     }
 
+    // let computerFleet = () => {
+    //     let i = 0;
+    //     // let ship =  Ship();
+    //     // gameBoard.computerCoords = [];
+    //     while(i < 5) {
+    //         computerShips(i);
+    //         // computerShips(i, ship);
+    //         i++;
+    //     }
+    //     // let board = document.querySelector('.board-container-for-computer');
+    //     // gameBoard.getCoordsFromClick(board);
+    //     console.log(gameBoard.computerCoords, 'computer')
+    // }
+
     let computerFleet = () => {
-        let i = 0;
-        let ship =  Ship();
-        // gameBoard.computerCoords = [];
-        while(i < 5) {
-            // computerShips(i);
-            computerShips(i, ship);
-            i++;
-        }
-        // let board = document.querySelector('.board-container-for-computer');
-        // gameBoard.getCoordsFromClick(board);
-        console.log(gameBoard.computerCoords, 'computer')
+        Player().computerFleet();
     }
 
-    let computerShips = (idx, ship) => {
+    let computerShips = (idx) => {
         let shipCoords = ship.coordsGenerator();
+        console.log(shipCoords, "compCoords");
 
         let board = document.querySelector('.board-container-for-computer');
 

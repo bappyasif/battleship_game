@@ -1,3 +1,4 @@
+const GameBoard = require("./gameBoard");
 const Ship = require("./ship");
 
 function Player(whichPlayer, ships) {
@@ -6,6 +7,41 @@ function Player(whichPlayer, ships) {
     let shipsHealth = {};
     let flagFleet = false;
     // let turnFlag = false;
+    // let gameBoard = GameBoard();
+    let coordsGen = Ship().coordsGenerator();
+
+    let computerFleet = () => {
+        let i = 0;
+        // let ship =  Ship();
+        // gameBoard.computerCoords = [];
+        while(i < 5) {
+            computerShips(i);
+            // computerShips(i, ship);
+            i++;
+        }
+        // let board = document.querySelector('.board-container-for-computer');
+        // gameBoard.getCoordsFromClick(board);
+        console.log(gameBoard.computerCoords, 'computer')
+    }
+
+    let computerShips = (idx) => {
+        // let shipCoords = Ship().coordsGenerator();
+        // let shipCoords = ship.coordsGenerator();
+        let shipCoords = coordsGen;
+        console.log(shipCoords, "compCoords");
+
+        let board = document.querySelector('.board-container-for-computer');
+
+        // gameBoard.computerCoords.push(shipCoords);
+        GameBoard().computerCoords.push(shipCoords);
+
+        // GameBoard().placeShips(shipCoords, board);
+        gameBoard.placeShips(shipCoords, board);
+
+        gameBoard.shipsHealth['computer'+idx] = {coords: shipCoords, length: shipCoords.length, remainingLength: shipCoords.length};
+
+        // computerFleetShipsCoords.push(shipCoords)
+    }
 
     if(whichPlayer === 'computer') {
         whosTurn = 'computer'
@@ -81,6 +117,7 @@ function Player(whichPlayer, ships) {
         coordsGenerator,
         positionShip,
         // trackingShipsUniqueCoords
+        computerFleet
     }
 }
 

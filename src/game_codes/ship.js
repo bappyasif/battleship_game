@@ -64,7 +64,9 @@ function Ship(coords, length, type) {
         // let randomNumeral = numeralsSet[randomNN];
         let [randomAlphabet, randomNumeral] = randomCoords();
         // console.log(randomAlphabet, randomNumeral, randomNN);
-        return shipsRandomCoordsGenerator(randomAlphabet, Number(randomNumeral));
+        
+        // return shipsRandomCoordsGenerator(randomAlphabet, Number(randomNumeral));
+        return shipsRandomCoordsGeneratorWithMods(randomAlphabet, Number(randomNumeral));
     }
 
     let shipsRandomCoordsGenerator = (alph, num) => {
@@ -119,6 +121,58 @@ function Ship(coords, length, type) {
         }
     }
 
+    let shipsRandomCoordsGeneratorWithMods = (alph, num) => {
+        let isEmpty = trackingShipsUniqueCoords.length;
+        let checkBoundary;
+        // console.log("?!", alph, num, isEmpty, trackingShipsUniqueCoords);
+        console.log(isEmpty, "isEmpty")
+        // if(isEmpty >= 5) return
+        while(isEmpty < 5) {
+            if(isEmpty == 0) {
+                checkBoundary = num + 5 > 9;
+                while(!checkBoundary) {
+                    // console.log("watt", creatingShip(alph, num, 5), trackingShipsUniqueCoords, trackingShipsUniqueCoords.length);
+                    return trackAndreturnShip(alph, num, 5);
+                }
+                return coordsGenerator();
+            } else {
+                let found;
+                // console.log(found, alph, num, '<>')
+                if(isEmpty === 1) {
+                    checkBoundary = num + 4 > 9;
+                    found = chekcingUniques(creatingShip(alph, num, 4));
+                    while(!checkBoundary && !found) {
+                        return trackAndreturnShip(alph, num, 4);
+                    }
+                } else if(isEmpty === 2) {
+                    checkBoundary = num + 3 > 9;
+                    found = chekcingUniques(creatingShip(alph, num, 3));
+                    while(!checkBoundary && !found) {
+                        return trackAndreturnShip(alph, num, 3);
+                    }
+                } else if(isEmpty === 3) {
+                    checkBoundary = num + 3 > 9;
+                    found = chekcingUniques(creatingShip(alph, num, 3));
+                    while(!checkBoundary && !found) {
+                        return trackAndreturnShip(alph, num, 3);
+                    }
+                } else if(isEmpty === 4) {
+                    checkBoundary = num + 2 > 9;
+                    found = chekcingUniques(creatingShip(alph, num, 2));
+                    while(!checkBoundary && !found) {
+                        return trackAndreturnShip(alph, num, 2);
+                    }
+                }
+                return coordsGenerator();
+            }
+        }
+    }
+
+    let trackAndreturnShip = (alph, num, length) => {
+        trackingShipsUniqueCoords.push(creatingShip(alph, num, length))
+        return creatingShip(alph, num, length);
+    }
+
     let creatingShip = (alph, num, length) => {
         let consecutiveCoords = [];
         let i = 0;
@@ -131,6 +185,7 @@ function Ship(coords, length, type) {
 
     let chekcingUniques = (coords) => {
         let flattened = trackingShipsUniqueCoords.flat(1);
+        // console.log(coords, flattened, "<>")
         // let found = flattened.some(ar => coords[0] === alph && coords[1] === num)
         let found = flattened.some(ar =>false );
         let chk = flattened.some(ar => coords.some(cr => cr[0] == ar[0] && cr[1] == ar[1]))
