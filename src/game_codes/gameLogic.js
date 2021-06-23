@@ -6,7 +6,7 @@ let game = () => {
     // main game loop and DOM interaction
     let human = Player('human', 5);
     let computer = Player('computer', 5);
-    // let ship = Ship();
+    let ship = Ship();
     let gameBoard = GameBoard();
     // let ship =  Ship();
     let computerFleetShipsCoords = [];
@@ -31,7 +31,7 @@ let game = () => {
     // placing ships on game board for human player
     let humanFleets = () => {
         let i = 0;
-        let ship =  Ship();
+        // let ship =  Ship();
         // gameBoard.humanCoords = [];
         // gameBoard.freshCoords();
         do{
@@ -41,7 +41,12 @@ let game = () => {
         } while(i<5)
         let humanBoard = document.querySelector('.board-container');
         gameBoard.getCoordsFromClick(humanBoard);
+        // here it will show that humanCoords has it's value, but when starts to playing round, after first match, it shows empty, for some reason i can't comprehend why?
         console.log(gameBoard.humanCoords, 'humans')
+        
+        // even trying to use some sort of "fail-safe" to ensure that humanCoords get's correct value
+        // gameBoard.humanCoords = humanFleetShipsCoords;  // doesn't help when click Play Again after a round
+        // gameBoard.humanCoords = gameBoard.humanCoords;
     }
 
     let buildingShips = (idx, ship) => {
@@ -73,6 +78,9 @@ let game = () => {
         // let board = document.querySelector('.board-container-for-computer');
         // gameBoard.getCoordsFromClick(board);
         console.log(gameBoard.computerCoords, 'computer')
+
+        // trying another fail safe attempt for humanCoords
+        // gameBoard.humanCoords = humanFleetShipsCoords; // still showing emtpy humanCoords, after first round
     }
 
     let computerShips = (idx, ship) => {
@@ -125,7 +133,8 @@ let game = () => {
     let removeHumanGameBoard = () => {
         let humanBoard = document.querySelector('.board-container');
         humanBoard.remove();
-        gameBoard.humanCoords = [];
+        // this line was causing humanCoords to become empty?!
+        // gameBoard.humanCoords = [];
     }
 
     let removeComputerGameBoard = () => {
@@ -146,6 +155,12 @@ let game = () => {
     computerFleet();
     beginPlay();
     
+    }
+
+    let updateCoordsForBoth = () => {
+        // not making any difference when trying to play after a round?! still showing an emtpy array for humanCoords, even though it should be loaded with right coords as it's on gameBoard on human side
+        gameBoard.humanCoords = humanFleetShipsCoords;
+        // gameBoard.computerCoords
     }
 
     let waitComputerBeReady = () => {
@@ -220,9 +235,10 @@ let game = () => {
         re_arrange_human_fleets,
         re_arrange_computer_fleets,
         beginPlay,
-        playAgain,
+        // playAgain,
         removeComputerGameBoard,
-        removeHumanGameBoard
+        removeHumanGameBoard,
+        updateCoordsForBoth
     }
 }
 

@@ -17,8 +17,11 @@ let startAgain = () => {
     Game.creatingComputerGameBoard();
     Game.creatingHumanGameBoard();
     Game.humanFleets();
-    Game.computerFleet();
+    // GameBoard().humanCoords = Game.humanFleetShipsCoords;
+    // Game.updateCoordsForBoth(); // tried to update coords hardcodedly after it's ready, but still getting an empty array for humanCoords?!
+    Game.computerFleet();  // btw, computerCoords works just fine!!
     Game.beginPlay();
+    // console.log(Game.humanFleetShipsCoords, "what now?"); // this is same as initial rendering of coords on board!!
 }
 
 let playAgain = document.querySelector('.play-again');

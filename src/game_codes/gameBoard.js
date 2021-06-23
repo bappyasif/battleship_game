@@ -63,7 +63,7 @@ function GameBoard(player) {
                 markShipBeingHit(checkCoords, checkBoard);
                 // console.log("found!!", checkCoords)
             } else {
-                console.log("missed", computerCoords, checkCoords);
+                console.log("missed", humanCoords, checkCoords);
                 loggingMissFiredShots.push({computer: checkCoords});
                 if(!alreadyVisited) {
                     missHits(checkCoords, checkBoard)
