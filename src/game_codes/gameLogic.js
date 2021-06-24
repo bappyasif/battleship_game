@@ -194,6 +194,17 @@ let game = () => {
         });
     }
 
+    let clearoutBtns = () => {
+        let btn = document.querySelector('.re-arrange-computer-formation');
+        let btnReady = document.querySelector('.computer-ready');
+        let btn2 = document.querySelector('.re-arrange-human-formation');
+        let btnReady2 = document.querySelector('.human-ready');
+        btn.classList.remove('unclickable', 'disabled-btn');
+        btn2.classList.remove('unclickable', 'disabled-btn');
+        btnReady.classList.remove('unclickable', 'disabled-btn');
+        btnReady2.classList.remove('unclickable', 'disabled-btn');
+    }
+
     let beginPlay = () => {
         let winner = document.querySelector('.winner');
         let playAgain = document.querySelector('.play-again');
@@ -238,7 +249,10 @@ let game = () => {
         // playAgain,
         removeComputerGameBoard,
         removeHumanGameBoard,
-        updateCoordsForBoth
+        updateCoordsForBoth,
+        waitComputerBeReady,
+        humanPlayerBeReady,
+        clearoutBtns
     }
 }
 

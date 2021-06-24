@@ -1,31 +1,55 @@
 import GameBoard from "./game_codes/gameBoard";
 import game from "./game_codes/gameLogic"
 
-let Game = game();
-Game.creatingComputerGameBoard();
-Game.creatingHumanGameBoard();
-Game.humanFleets();
-Game.computerFleet();
-Game.re_arrange_human_fleets();
-// Game.re_arrange_computer_fleets();
-Game.beginPlay();
+// let Game = game();
+
+let startGame = () => {
+    let Game = game();
+    Game.creatingComputerGameBoard();
+    Game.creatingHumanGameBoard();
+    Game.humanFleets();
+    Game.computerFleet();
+    // Game.re_arrange_human_fleets();
+    // Game.re_arrange_computer_fleets();
+    // Game.waitComputerBeReady();
+    // Game.humanPlayerBeReady();
+    Game.beginPlay();
+}
 
 let startAgain = () => {
     let Game = game();
+    // Game.clearoutBtns();
     Game.removeComputerGameBoard();
     Game.removeHumanGameBoard();
     Game.creatingComputerGameBoard();
     Game.creatingHumanGameBoard();
     Game.humanFleets();
-    // GameBoard().humanCoords = Game.humanFleetShipsCoords;
-    // Game.updateCoordsForBoth(); // tried to update coords hardcodedly after it's ready, but still getting an empty array for humanCoords?!
+    // // GameBoard().humanCoords = Game.humanFleetShipsCoords;
+    // // Game.updateCoordsForBoth(); // tried to update coords hardcodedly after it's ready, but still getting an empty array for humanCoords?!
     Game.computerFleet();  // btw, computerCoords works just fine!!
+    // Game.waitComputerBeReady();
+    // Game.humanPlayerBeReady();
     Game.beginPlay();
     // console.log(Game.humanFleetShipsCoords, "what now?"); // this is same as initial rendering of coords on board!!
+    // startGame();
 }
 
 let playAgain = document.querySelector('.play-again');
 playAgain.addEventListener('click', startAgain);
+
+let reArrangeHumanFleet = () => {
+    let Game = game();
+    Game.removeHumanGameBoard();
+    Game.creatingHumanGameBoard();
+    Game.humanFleets();
+    Game.beginPlay();
+    // startAgain();
+}
+
+let btn = document.querySelector('.re-arrange-human-formation');
+btn.addEventListener('click', reArrangeHumanFleet);
+
+startGame();
 
 // let re_Arrange_Human_Fleet = () => {
 //     let btn = document.querySelector('.re-arrange-human-formation');
