@@ -31,7 +31,9 @@ let game = () => {
     // placing ships on game board for human player
     let humanFleets = () => {
         let i = 0;
-        let ship =  Ship();
+        // let ship =  Ship();
+        // gameBoard.humanCoords = [];
+        // gameBoard.freshCoords();
         do{
             // buildingShips(i);
             buildingShips(i, ship);
@@ -39,7 +41,12 @@ let game = () => {
         } while(i<5)
         let humanBoard = document.querySelector('.board-container');
         gameBoard.getCoordsFromClick(humanBoard);
+        // here it will show that humanCoords has it's value, but when starts to playing round, after first match, it shows empty, for some reason i can't comprehend why?
         console.log(gameBoard.humanCoords, 'humans')
+        
+        // even trying to use some sort of "fail-safe" to ensure that humanCoords get's correct value
+        // gameBoard.humanCoords = humanFleetShipsCoords;  // doesn't help when click Play Again after a round
+        // gameBoard.humanCoords = gameBoard.humanCoords;
     }
 
     let buildingShips = (idx, ship) => {
@@ -48,6 +55,7 @@ let game = () => {
         let shipCoords = ship.coordsGenerator();
         
         // gameBoard.humanCoords = [];
+        // gameBoard.humanCoords.unshift();
         gameBoard.humanCoords.push(shipCoords);
         
         // GameBoard(human).placeShips(shipCoords, board);
@@ -70,6 +78,9 @@ let game = () => {
         // let board = document.querySelector('.board-container-for-computer');
         // gameBoard.getCoordsFromClick(board);
         console.log(gameBoard.computerCoords, 'computer')
+
+        // trying another fail safe attempt for humanCoords
+        // gameBoard.humanCoords = humanFleetShipsCoords; // still showing emtpy humanCoords, after first round
     }
 
     let computerShips = (idx, ship) => {
@@ -87,6 +98,40 @@ let game = () => {
         computerFleetShipsCoords.push(shipCoords)
     }
 
+    let re_arrange_human_fleets = () => {
+        let btn = document.querySelector('.re-arrange-human-formation');
+        // let board = document.querySelector('.board-container');
+        // btn.addEventListener('click', (evt) => reArrangeHumanFleet(evt, board));
+        btn.addEventListener('click', reArrangeHumanFleet);
+    }
+
+    let re_arrange_computer_fleets = () => {
+        // let btn = document.querySelector('.re-arrange-computer-formation');
+        let board = document.querySelector('.board-container-for-computer');
+        // btn.addEventListener('click', (evt) => reArrangeComputerFleet(evt, board));
+        // gameBoard.computerCoords = [];
+        reArrangeComputerFleet(board);
+    }
+
+    let reArrangeHumanFleet = () => {
+        removeHumanGameBoard();
+        creatingHumanGameBoard();
+        // gameBoard.humanCoords = [];
+        
+        // let board = document.querySelector('.board-container');
+        // gameBoard.removingShipsFromBoard(board);
+        
+        setTimeout(()=>humanFleets(), 1001);
+        console.log('human coords', gameBoard.humanCoords);
+    }
+
+    let reArrangeComputerFleet = (board) => {
+        gameBoard.removingShipsFromBoard(board);
+        if(board.className.contains = '-for-computer') {
+            setTimeout(()=>computerFleet(), 1001);
+        }
+    }
+
     let removeHumanGameBoard = () => {
         let humanBoard = document.querySelector('.board-container');
         humanBoard.remove();
@@ -97,6 +142,31 @@ let game = () => {
     let removeComputerGameBoard = () => {
         let computerBoard = document.querySelector('.board-container-for-computer');
         computerBoard.remove();
+    }
+
+    let playAgain = () => {
+        let playAgain = document.querySelector('.play-again');
+        playAgain.addEventListener('click', startProcess)
+    }
+
+    let startProcess = () => {
+        removeHumanGameBoard();
+        removeComputerGameBoard();
+        
+        creatingComputerGameBoard();
+        creatingHumanGameBoard();
+
+        setTimeout(() => {
+            humanFleets();
+            computerFleet();
+        }, 1001)
+        beginPlay();
+    }
+
+    let updateCoordsForBoth = () => {
+        // not making any difference when trying to play after a round?! still showing an emtpy array for humanCoords, even though it should be loaded with right coords as it's on gameBoard on human side
+        gameBoard.humanCoords = humanFleetShipsCoords;
+        // gameBoard.computerCoords
     }
 
     let waitComputerBeReady = () => {
@@ -112,31 +182,12 @@ let game = () => {
                 re_arrange_computer_fleets();
                 ready.computer = true;
             }
-            // btn.classList.add('unclickable', 'disabled-btn');
-            // btnReady.classList.add('unclickable', 'disabled-btn');
+            btn.classList.add('unclickable', 'disabled-btn');
+            btnReady.classList.add('unclickable', 'disabled-btn');
             alert('computer ready!!')
         }, 2000)
 
         // if(ready.computer) return true;
-    }
-
-    let re_arrange_computer_fleets = () => {
-     removeComputerGameBoard();
-     creatingComputerGameBoard();
-     computerFleet();
-     beginPlay();
-    }
-    
-    let computerReady = () => {
-        let rand = () => Math.random();
-        setTimeout(() => {
-            while(rand() > .5) {
-                // console.log("here!!")
-                re_arrange_computer_fleets();
-                // ready.computer = true;
-            }
-            alert('computer ready!!')
-        }, 2000)
     }
 
     let humanPlayerBeReady = () => {
@@ -149,20 +200,6 @@ let game = () => {
         });
     }
 
-    let reArrangeHumanFleet = () => {
-        // let Game = game();
-        // Game.removeHumanGameBoard();
-        // Game.creatingHumanGameBoard();
-        // Game.humanFleets();
-        // Game.beginPlay();
-        removeHumanGameBoard();
-        creatingHumanGameBoard()
-        humanFleets();
-    }
-    
-    // let btn2 = document.querySelector('.re-arrange-human-formation');
-    // btn2.addEventListener('click', reArrangeHumanFleet);
-
     let beginPlay = () => {
         let winner = document.querySelector('.winner');
         let playAgain = document.querySelector('.play-again');
@@ -170,10 +207,22 @@ let game = () => {
         winner.style.display = 'none';
         playAgain.style.display = 'none';
         
-        // computerReady();
-        // let btn2 = document.querySelector('.re-arrange-human-formation');
-        // btn2.addEventListener('click', reArrangeHumanFleet);
         gameBoard.playersTurn();
+
+        // waitComputerBeReady();
+        // humanPlayerBeReady();
+        // startGame()
+        // console.log(ready)
+        // if(ready.human && ready.computer) {
+        //     // gameBoard.playersTurn();
+        //     console.log("here!!")
+        //     // startGame();
+        // } 
+        // else {
+        //     // beginPlay()
+        // }
+        // console.log(ready, "??", readyHuman)
+        
     }
 
     let startGame = () => {
@@ -181,8 +230,10 @@ let game = () => {
         creatingComputerGameBoard();
         humanFleets();
         computerFleet();
-        // waitComputerBeReady();
         beginPlay();
+        // gameBoard.playersTurn();
+        // alert('game ready, your turn!!');
+        // gameBoard.playersTurn();
     }
 
     return {
@@ -192,9 +243,13 @@ let game = () => {
         computerFleet,
         computerFleetShipsCoords,
         humanFleetShipsCoords,
+        re_arrange_human_fleets,
+        re_arrange_computer_fleets,
         beginPlay,
+        playAgain,
         removeComputerGameBoard,
         removeHumanGameBoard,
+        updateCoordsForBoth,
         startGame
     }
 }
