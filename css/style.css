@@ -15,20 +15,22 @@ body{
     justify-content: space-evenly;
     margin: 1.1px;
     /* margin: auto; */
+    max-width: 40vw;
+    min-width: min-content;
 }
 
-.board-grids, .ship-placed {
+.board-grids, .ship-placed, .hide-ship {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 33px;
+    width: 3.71vw;
     height: 29px;
     color: green;
     background-color: burlywood;
     margin-top: 2px;
 }
 
-.board-grids:hover, .ship-placed:hover {
+.board-grids:hover, .ship-placed:hover, .hide-ship:hover {
     font-size: large;
 }
 
@@ -110,3 +112,14 @@ body{
 .winner:hover, .play-again:hover {
     font-size: x-large;
 }
+
+/* .btns {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 4px;
+}
+
+.ready {
+    margin-left: 0;
+} */
