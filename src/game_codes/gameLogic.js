@@ -4,8 +4,8 @@ const Ship = require('./ship');
 
 let game = () => {
     // main game loop and DOM interaction
-    let human = Player('human', 5);
-    let computer = Player('computer', 5);
+    // let human = Player('human', 5);
+    // let computer = Player('computer', 5);
     let ship = Ship();
     let gameBoard = GameBoard();
     // let ship =  Ship();
@@ -47,10 +47,8 @@ let game = () => {
 
         let shipCoords = ship.coordsGenerator();
         
-        // gameBoard.humanCoords = [];
         gameBoard.humanCoords.push(shipCoords);
         
-        // GameBoard(human).placeShips(shipCoords, board);
         gameBoard.placeShips(shipCoords, board);
 
         gameBoard.shipsHealth['human'+idx] = {coords: shipCoords, length: shipCoords.length, remainingLength: shipCoords.length};
@@ -61,7 +59,6 @@ let game = () => {
     let computerFleet = () => {
         let i = 0;
         let ship =  Ship();
-        // gameBoard.computerCoords = [];
         while(i < 5) {
             // computerShips(i);
             computerShips(i, ship);
@@ -99,70 +96,6 @@ let game = () => {
         computerBoard.remove();
     }
 
-    let waitComputerBeReady = () => {
-        // let ready = {};
-        let btn = document.querySelector('.re-arrange-computer-formation');
-        let btnReady = document.querySelector('.computer-ready');
-
-        // for computer we'll randomize thios process
-        let rand = () => Math.random();
-        setTimeout(() => {
-            while(rand() > .5) {
-                console.log("here!!")
-                re_arrange_computer_fleets();
-                ready.computer = true;
-            }
-            // btn.classList.add('unclickable', 'disabled-btn');
-            // btnReady.classList.add('unclickable', 'disabled-btn');
-            alert('computer ready!!')
-        }, 2000)
-
-        // if(ready.computer) return true;
-    }
-
-    let re_arrange_computer_fleets = () => {
-     removeComputerGameBoard();
-     creatingComputerGameBoard();
-     computerFleet();
-     beginPlay();
-    }
-    
-    let computerReady = () => {
-        let rand = () => Math.random();
-        setTimeout(() => {
-            while(rand() > .5) {
-                // console.log("here!!")
-                re_arrange_computer_fleets();
-                // ready.computer = true;
-            }
-            alert('computer ready!!')
-        }, 2000)
-    }
-
-    let humanPlayerBeReady = () => {
-        let btn = document.querySelector('.re-arrange-human-formation');
-        let btnReady = document.querySelector('.human-ready');
-        btnReady.addEventListener('click', () => {
-            btn.classList.add('unclickable', 'disabled-btn');
-            btnReady.classList.add('unclickable', 'disabled-btn');
-            ready.human = true;
-        });
-    }
-
-    let reArrangeHumanFleet = () => {
-        // let Game = game();
-        // Game.removeHumanGameBoard();
-        // Game.creatingHumanGameBoard();
-        // Game.humanFleets();
-        // Game.beginPlay();
-        removeHumanGameBoard();
-        creatingHumanGameBoard()
-        humanFleets();
-    }
-    
-    // let btn2 = document.querySelector('.re-arrange-human-formation');
-    // btn2.addEventListener('click', reArrangeHumanFleet);
-
     let beginPlay = () => {
         let winner = document.querySelector('.winner');
         let playAgain = document.querySelector('.play-again');
@@ -170,9 +103,6 @@ let game = () => {
         winner.style.display = 'none';
         playAgain.style.display = 'none';
         
-        // computerReady();
-        // let btn2 = document.querySelector('.re-arrange-human-formation');
-        // btn2.addEventListener('click', reArrangeHumanFleet);
         gameBoard.playersTurn();
     }
 
@@ -185,6 +115,15 @@ let game = () => {
         beginPlay();
     }
 
+    let togglingSneakPeakOnComputerFleet = () => {
+        gameBoard.togglingComputerFleetVisuals();
+    }
+
+    let sneakPeakOnComputer = () => {
+        let btn = document.querySelector('.sneak-peak');
+        btn.addEventListener('click', togglingSneakPeakOnComputerFleet);
+    }
+
     return {
         creatingComputerGameBoard,
         creatingHumanGameBoard, 
@@ -195,7 +134,8 @@ let game = () => {
         beginPlay,
         removeComputerGameBoard,
         removeHumanGameBoard,
-        startGame
+        startGame,
+        sneakPeakOnComputer
     }
 }
 
