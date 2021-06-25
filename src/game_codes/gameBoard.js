@@ -30,16 +30,54 @@ function GameBoard(player) {
 
     let placeShips = (coords, board) => {
         if(board) {
-            Array.from(board.children).forEach((grid) => {
-                let idx = 0;
-                do {
-                    if(grid.value[0] === coords[idx][0] && grid.value[1] == coords[idx][1]) {
-                        grid.className = 'ship-placed';
-                    }
-                    idx++;
-                } while(idx < coords.length);
-            })
+            if(board.className.includes ('board-container-for-computer')) {
+                placingShipsForComputer(board, coords)
+            } else {
+                placingShipsForHuman(board, coords)
+            }
         }
+    }
+
+    let placingShipsForHuman = (board, coords) => {
+        Array.from(board.children).forEach((grid) => {
+            let idx = 0;
+            do {
+                if(grid.value[0] === coords[idx][0] && grid.value[1] == coords[idx][1]) {
+                    grid.className = 'ship-placed';
+                }
+                idx++;
+            } while(idx < coords.length);
+        })
+    }
+
+    let placingShipsForComputer = (board, coords) => {
+        Array.from(board.children).forEach((grid) => {
+            let idx = 0;
+            do {
+                if(grid.value[0] === coords[idx][0] && grid.value[1] == coords[idx][1]) {
+                    // grid.className = 'ship-placed';
+                    // grid.classList.add()
+                    grid.className = 'hide-ship';
+                }
+                idx++;
+            } while(idx < coords.length);
+        })
+    }
+
+    let togglingComputerFleetVisuals = () => {
+        let board = document.querySelector('.board-container-for-computer');
+        let sneakPeak = document.querySelector('.sneak-peak');
+        Array.from(board.children).forEach(grid => {
+            if(grid.classList.contains('hide-ship')) {
+                grid.classList.remove('hide-ship');
+                grid.classList.add('ship-placed');
+                sneakPeak.textContent = 'turn off sneak peak';
+            } else if(grid.classList.contains('ship-placed')) {
+                grid.classList.add('hide-ship');
+                grid.classList.remove('ship-placed');
+                sneakPeak.textContent = 'sneak peak';
+            }
+        })
     }
 
     let getCoordsFromClick = (board) => {
@@ -441,7 +479,8 @@ function GameBoard(player) {
         playersTurn,
         checkAllShipsSank,
         removingPreviousBoardGrids,
-        freshCoords
+        freshCoords,
+        togglingComputerFleetVisuals
     }
 }
 

@@ -58,4 +58,9 @@ test.only('should check hit functionality', () => {
 
 test.only('should check if sunk', () => {
     expect(Ship(["g","4"], 0).isSunk()).toBe(true)
+});
+
+test.only('should check uniques and return false', () => {
+    // expect(Ship().chekcingUniques(["G", "4"])).toBe(true);
+    // expect(Ship().chekcingUniques(["G", "4"])).toBe(false);
 })

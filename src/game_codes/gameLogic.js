@@ -185,6 +185,15 @@ let game = () => {
         beginPlay();
     }
 
+    let togglingSneakPeakOnComputerFleet = () => {
+        gameBoard.togglingComputerFleetVisuals();
+    }
+
+    let sneakPeakOnComputer = () => {
+        let btn3 = document.querySelector('.sneak-peak');
+        btn3.addEventListener('click', togglingSneakPeakOnComputerFleet);
+    }
+
     return {
         creatingComputerGameBoard,
         creatingHumanGameBoard, 
@@ -195,7 +204,8 @@ let game = () => {
         beginPlay,
         removeComputerGameBoard,
         removeHumanGameBoard,
-        startGame
+        startGame,
+        sneakPeakOnComputer
     }
 }
 

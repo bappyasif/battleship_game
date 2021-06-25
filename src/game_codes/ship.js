@@ -150,10 +150,11 @@ function Ship(coords, length, type) {
         shipLength,
         coordsGenerator,
         trackingShipsUniqueCoords,
-        randomCoords
+        randomCoords,
         // shipsRandomCoordsGenerator
         // fleetStatus,
         // allShipsHasSunk
+        chekcingUniques
     }
 }
 
